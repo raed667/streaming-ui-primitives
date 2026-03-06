@@ -1,0 +1,16 @@
+node_modules/
+dist/
+
+.storybook-static/
+storybook-static/
+
+playwright-report/
+.playwright-mcp/
+
+test-results/
+
+*.tsbuildinfo
+.DS_Store
+
+.claude/
+CLAUDE.md

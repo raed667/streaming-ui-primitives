@@ -20,23 +20,17 @@ describe('StreamingText', () => {
   })
 
   it('renders cursor when cursor=true and isStreaming=true', () => {
-    const { container } = render(
-      <StreamingText content="Hello" cursor isStreaming />,
-    )
+    const { container } = render(<StreamingText content="Hello" cursor isStreaming />)
     expect(container.querySelector('[data-streaming-cursor]')).toBeInTheDocument()
   })
 
   it('does not render cursor when isStreaming=false', () => {
-    const { container } = render(
-      <StreamingText content="Hello" cursor isStreaming={false} />,
-    )
+    const { container } = render(<StreamingText content="Hello" cursor isStreaming={false} />)
     expect(container.querySelector('[data-streaming-cursor]')).not.toBeInTheDocument()
   })
 
   it('does not render cursor when cursor=false', () => {
-    const { container } = render(
-      <StreamingText content="Hello" cursor={false} isStreaming />,
-    )
+    const { container } = render(<StreamingText content="Hello" cursor={false} isStreaming />)
     expect(container.querySelector('[data-streaming-cursor]')).not.toBeInTheDocument()
   })
 

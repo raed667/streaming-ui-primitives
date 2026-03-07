@@ -1,6 +1,6 @@
 import React from 'react'
-import { partsToText } from 'streaming-ui-primitives/adapters'
-import type { UIMessageCompat } from 'streaming-ui-primitives'
+import { partsToText } from '@raed667/streaming-ui-primitives/adapters'
+import type { UIMessageCompat } from '@raed667/streaming-ui-primitives'
 
 interface Props {
   messages: UIMessageCompat[]

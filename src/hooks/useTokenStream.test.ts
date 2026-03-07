@@ -90,7 +90,7 @@ describe('useTokenStream', () => {
     // Use a slow stream that we can abort mid-way
     async function* slowStream(): AsyncIterable<string> {
       yield 'first'
-      await new Promise(resolve => setTimeout(resolve, 10000)) // very slow
+      await new Promise((resolve) => setTimeout(resolve, 10000)) // very slow
       yield 'second' // should never arrive
     }
 

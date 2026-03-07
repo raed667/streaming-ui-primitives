@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useTokenStream } from '../hooks/useTokenStream'
 import { StreamingText } from '../components/StreamingText'
 import { TypingIndicator } from '../components/TypingIndicator'
@@ -29,7 +29,7 @@ Each token arrives one at a time.`.split(' ')
 
 async function* simulateStream(delayMs: number): AsyncIterable<string> {
   for (const token of TOKENS) {
-    await new Promise(r => setTimeout(r, delayMs))
+    await new Promise((r) => setTimeout(r, delayMs))
     yield token + ' '
   }
 }
@@ -64,12 +64,8 @@ function TokenStreamDemo({ speed = 80 }: { speed?: number }) {
               {text === '' && <TypingIndicator visible />}
             </span>
           }
-          complete={
-            <StreamingText content={text} isStreaming={false} cursor={false} as="span" />
-          }
-          error={err => (
-            <span style={{ color: '#ef4444' }}>Error: {err?.message}</span>
-          )}
+          complete={<StreamingText content={text} isStreaming={false} cursor={false} as="span" />}
+          error={(err) => <span style={{ color: '#ef4444' }}>Error: {err?.message}</span>}
           errorValue={error}
         />
       </div>
@@ -83,7 +79,10 @@ function TokenStreamDemo({ speed = 80 }: { speed?: number }) {
           {status === 'streaming' ? 'Streaming…' : 'Start'}
         </button>
         <button
-          onClick={() => { reset(); setSource(null) }}
+          onClick={() => {
+            reset()
+            setSource(null)
+          }}
           style={{ padding: '6px 16px', cursor: 'pointer' }}
         >
           Reset
@@ -108,14 +107,16 @@ export const FastStream: Story = {
 
 export const SlowStream: Story = {
   render: () => <TokenStreamDemo speed={300} />,
-  parameters: { docs: { description: { story: '300ms per token — clearly visible gaps between tokens.' } } },
+  parameters: {
+    docs: { description: { story: '300ms per token — clearly visible gaps between tokens.' } },
+  },
 }
 
 // Error simulation
 async function* failingStream(): AsyncIterable<string> {
   yield 'Starting… '
   yield 'Got some data… '
-  await new Promise(r => setTimeout(r, 300))
+  await new Promise((r) => setTimeout(r, 300))
   throw new Error('Connection dropped at token 3')
 }
 
@@ -140,22 +141,27 @@ function ErrorDemo() {
           idle={<span style={{ color: '#9ca3af' }}>Press Start to watch the error…</span>}
           streaming={<StreamingText content={text} isStreaming cursor as="span" />}
           complete={<StreamingText content={text} isStreaming={false} as="span" />}
-          error={err => (
-            <span style={{ color: '#ef4444' }}>
-              Error caught: {err?.message}
-            </span>
-          )}
+          error={(err) => <span style={{ color: '#ef4444' }}>Error caught: {err?.message}</span>}
           errorValue={error}
         />
       </div>
       <button
-        onClick={() => { reset(); setSource(failingStream()) }}
+        onClick={() => {
+          reset()
+          setSource(failingStream())
+        }}
         disabled={status === 'streaming'}
         style={{ padding: '6px 16px', cursor: 'pointer', marginRight: 8 }}
       >
         Start
       </button>
-      <button onClick={() => { reset(); setSource(null) }} style={{ padding: '6px 16px', cursor: 'pointer' }}>
+      <button
+        onClick={() => {
+          reset()
+          setSource(null)
+        }}
+        style={{ padding: '6px 16px', cursor: 'pointer' }}
+      >
         Reset
       </button>
     </div>
@@ -167,7 +173,8 @@ export const ErrorHandling: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The stream throws mid-way. `status` transitions to `error` and `error` holds the thrown value.',
+        story:
+          'The stream throws mid-way. `status` transitions to `error` and `error` holds the thrown value.',
       },
     },
   },
@@ -182,9 +189,9 @@ function CallbacksDemo() {
   const [log, setLog] = useState<string[]>([])
 
   const { text, tokenCount, status, reset } = useTokenStream(source, {
-    onToken: (token) => setLog(prev => [...prev, `onToken("${token.trim()}")`]),
-    onComplete: (fullText) => setLog(prev => [...prev, `onComplete(${fullText.length} chars)`]),
-    onError: (err) => setLog(prev => [...prev, `onError("${err.message}")`]),
+    onToken: (token) => setLog((prev) => [...prev, `onToken("${token.trim()}")`]),
+    onComplete: (fullText) => setLog((prev) => [...prev, `onComplete(${fullText.length} chars)`]),
+    onError: (err) => setLog((prev) => [...prev, `onError("${err.message}")`]),
   })
 
   function start() {
@@ -218,7 +225,14 @@ function CallbacksDemo() {
         >
           {status === 'streaming' ? `Streaming… (${tokenCount})` : 'Start'}
         </button>
-        <button onClick={() => { setLog([]); reset(); setSource(null) }} style={{ padding: '6px 16px', cursor: 'pointer' }}>
+        <button
+          onClick={() => {
+            setLog([])
+            reset()
+            setSource(null)
+          }}
+          style={{ padding: '6px 16px', cursor: 'pointer' }}
+        >
           Reset
         </button>
       </div>
@@ -235,10 +249,11 @@ function CallbacksDemo() {
           color: '#cdd6f4',
         }}
       >
-        {log.length === 0
-          ? <span style={{ color: '#585b70' }}>// callbacks will appear here</span>
-          : log.map((entry, i) => <div key={i}>{entry}</div>)
-        }
+        {log.length === 0 ? (
+          <span style={{ color: '#585b70' }}>// callbacks will appear here</span>
+        ) : (
+          log.map((entry, i) => <div key={i}>{entry}</div>)
+        )}
       </div>
     </div>
   )

@@ -1,10 +1,10 @@
-# streaming-ui-primitives
+# @raed667/streaming-ui-primitives
 
 Unstyled React primitives for generative/streaming UI patterns — compatible with Vercel AI SDK, Anthropic, OpenAI, and more.
 
-[![npm](https://img.shields.io/npm/v/streaming-ui-primitives)](https://www.npmjs.com/package/streaming-ui-primitives)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/streaming-ui-primitives?label=bundle)](https://bundlephobia.com/package/streaming-ui-primitives)
-[![license](https://img.shields.io/npm/l/streaming-ui-primitives)](./LICENSE)
+[![npm](https://img.shields.io/npm/v/@raed667/streaming-ui-primitives)](https://www.npmjs.com/package/@raed667/streaming-ui-primitives)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@raed667/streaming-ui-primitives?label=bundle)](https://bundlephobia.com/package/@raed667/streaming-ui-primitives)
+[![license](https://img.shields.io/npm/l/@raed667/streaming-ui-primitives)](./LICENSE)
 [![tests](https://img.shields.io/github/actions/workflow/status/raed-chammam/streaming-ui-primitives/ci.yml?label=tests)](https://github.com/raed-chammam/streaming-ui-primitives/actions)
 
 ---
@@ -12,11 +12,11 @@ Unstyled React primitives for generative/streaming UI patterns — compatible wi
 ## Install
 
 ```bash
-npm install streaming-ui-primitives
+npm install @raed667/streaming-ui-primitives
 # or
-pnpm add streaming-ui-primitives
+pnpm add @raed667/streaming-ui-primitives
 # or
-yarn add streaming-ui-primitives
+yarn add @raed667/streaming-ui-primitives
 ```
 
 **Peer dependencies:** React 18+
@@ -30,8 +30,8 @@ import {
   useTokenStream,
   StreamingText,
   StreamGuard,
-} from "streaming-ui-primitives";
-import { fromFetchSSE } from "streaming-ui-primitives/adapters";
+} from "@raed667/streaming-ui-primitives";
+import { fromFetchSSE } from "@raed667/streaming-ui-primitives/adapters";
 
 function ChatMessage() {
   const [stream, setStream] = React.useState<AsyncIterable<string> | null>(
@@ -72,7 +72,7 @@ function ChatMessage() {
 Consumes any token source and accumulates the text, tracking the full streaming lifecycle.
 
 ```tsx
-import { useTokenStream } from "streaming-ui-primitives";
+import { useTokenStream } from "@raed667/streaming-ui-primitives";
 
 // source can be AsyncIterable<string>, ReadableStream<Uint8Array>, or null/undefined
 const { text, isStreaming, status, error, abort, reset } =
@@ -88,7 +88,7 @@ Pass `null` or `undefined` to keep the hook idle. When `source` changes, the pre
 Bridges Vercel AI SDK's `UIMessage.parts` array to simple derived values. No runtime dependency on the `ai` package.
 
 ```tsx
-import { useMessageStream } from "streaming-ui-primitives";
+import { useMessageStream } from "@raed667/streaming-ui-primitives";
 
 const { messages, status } = useChat({ api: "/api/chat" });
 const lastMsg = messages[messages.length - 1];
@@ -103,7 +103,7 @@ const { text, reasoning, hasActiveToolCall, hasReasoning, sourceUrls } =
 Debounces `isStreaming` to prevent flicker when a stream pauses briefly between tokens.
 
 ```tsx
-import { useDebouncedStreaming } from "streaming-ui-primitives";
+import { useDebouncedStreaming } from "@raed667/streaming-ui-primitives";
 
 const { isStreaming } = useTokenStream(source);
 const stableStreaming = useDebouncedStreaming(isStreaming, 150); // default: 150ms
@@ -116,7 +116,7 @@ const stableStreaming = useDebouncedStreaming(isStreaming, 150); // default: 150
 Maps a Vercel AI SDK `useChat` status string directly to `StreamStatus`.
 
 ```tsx
-import { useAISDKStatus } from "streaming-ui-primitives";
+import { useAISDKStatus } from "@raed667/streaming-ui-primitives";
 
 const { status } = useChat({ api: "/api/chat" });
 const streamStatus = useAISDKStatus(status); // 'idle' | 'streaming' | 'complete' | 'error'
@@ -129,7 +129,7 @@ const streamStatus = useAISDKStatus(status); // 'idle' | 'streaming' | 'complete
 Renders text that grows token-by-token. Completely unstyled — no fonts, colors, or layout applied.
 
 ```tsx
-import { StreamingText } from 'streaming-ui-primitives'
+import { StreamingText } from '@raed667/streaming-ui-primitives'
 
 // Blinking cursor while streaming, hidden when complete
 <StreamingText content={text} isStreaming={isStreaming} cursor />
@@ -148,7 +148,7 @@ import { StreamingText } from 'streaming-ui-primitives'
 Animated "AI is thinking" indicator. Inherits `color` from the parent — fits any theme automatically.
 
 ```tsx
-import { TypingIndicator } from 'streaming-ui-primitives'
+import { TypingIndicator } from '@raed667/streaming-ui-primitives'
 
 // Three bouncing dots (default)
 <TypingIndicator visible={isStreaming} />
@@ -170,7 +170,7 @@ import { TypingIndicator } from 'streaming-ui-primitives'
 Gracefully renders partial/incomplete content during streaming. Uses an error boundary to catch parse errors mid-stream and fall back to plain text. Renderer-agnostic — pass any render function.
 
 ```tsx
-import { PartialRender } from "streaming-ui-primitives";
+import { PartialRender } from "@raed667/streaming-ui-primitives";
 import { marked } from "marked";
 
 <PartialRender
@@ -191,7 +191,7 @@ import { marked } from "marked";
 Status-driven render slots — a type-safe switch/case over stream lifecycle states.
 
 ```tsx
-import { StreamGuard } from "streaming-ui-primitives";
+import { StreamGuard } from "@raed667/streaming-ui-primitives";
 
 <StreamGuard
   status={status}
@@ -216,7 +216,7 @@ import {
   fromAnthropicStream,
   partsToText,
   hasActiveToolCall,
-} from "streaming-ui-primitives/adapters";
+} from "@raed667/streaming-ui-primitives/adapters";
 ```
 
 ---
@@ -267,7 +267,7 @@ Converts an Anthropic SDK `client.messages.stream(...)` result to `AsyncIterable
 
 ```tsx
 import Anthropic from "@anthropic-ai/sdk";
-import { fromAnthropicStream } from "streaming-ui-primitives/adapters";
+import { fromAnthropicStream } from "@raed667/streaming-ui-primitives/adapters";
 
 const client = new Anthropic();
 const stream = client.messages.stream({
@@ -291,7 +291,7 @@ Converts an OpenAI SDK `chat.completions.stream(...)` result to `AsyncIterable<s
 
 ```tsx
 import OpenAI from "openai";
-import { fromOpenAIChatStream } from "streaming-ui-primitives/adapters";
+import { fromOpenAIChatStream } from "@raed667/streaming-ui-primitives/adapters";
 
 const openai = new OpenAI();
 const stream = openai.chat.completions.stream({
@@ -327,7 +327,7 @@ const tokenStream = fromOpenAICompletionStream(stream);
 Extracts plain text from a Vercel AI SDK `UIMessage.parts` array. Concatenates all `type: 'text'` parts in order.
 
 ```tsx
-import { partsToText } from "streaming-ui-primitives/adapters";
+import { partsToText } from "@raed667/streaming-ui-primitives/adapters";
 
 const { messages } = useChat({ api: "/api/chat" });
 const lastMessage = messages[messages.length - 1];
@@ -346,7 +346,7 @@ const textWithReasoning = partsToText(lastMessage.parts, {
 Returns `true` if any `tool-invocation` part is in a non-result state.
 
 ```tsx
-import { hasActiveToolCall } from 'streaming-ui-primitives/adapters'
+import { hasActiveToolCall } from '@raed667/streaming-ui-primitives/adapters'
 
 const isToolRunning = hasActiveToolCall(message.parts)
 <TypingIndicator visible={isToolRunning} aria-label="Running tool..." />
@@ -359,7 +359,7 @@ const isToolRunning = hasActiveToolCall(message.parts)
 Utility function (also exported from the main entry) that maps a Vercel AI SDK `useChat` status to `StreamStatus`.
 
 ```tsx
-import { fromUseChatStatus } from "streaming-ui-primitives";
+import { fromUseChatStatus } from "@raed667/streaming-ui-primitives";
 
 const { status } = useChat({ api: "/api/chat" });
 const streamStatus = fromUseChatStatus(status);

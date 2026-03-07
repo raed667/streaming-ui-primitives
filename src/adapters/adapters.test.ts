@@ -103,16 +103,12 @@ async function* openAIChatChunks(contents: (string | null)[]) {
 
 describe('fromOpenAIChatStream', () => {
   it('extracts content from chat chunks', async () => {
-    const chunks = await collect(
-      fromOpenAIChatStream(openAIChatChunks(['Hello', ' ', 'world'])),
-    )
+    const chunks = await collect(fromOpenAIChatStream(openAIChatChunks(['Hello', ' ', 'world'])))
     expect(chunks).toEqual(['Hello', ' ', 'world'])
   })
 
   it('skips null/undefined content chunks', async () => {
-    const chunks = await collect(
-      fromOpenAIChatStream(openAIChatChunks([null, 'text', null])),
-    )
+    const chunks = await collect(fromOpenAIChatStream(openAIChatChunks([null, 'text', null])))
     expect(chunks).toEqual(['text'])
   })
 
@@ -134,9 +130,7 @@ async function* openAICompletionChunks(texts: (string | null)[]) {
 
 describe('fromOpenAICompletionStream', () => {
   it('extracts text from completion chunks', async () => {
-    const chunks = await collect(
-      fromOpenAICompletionStream(openAICompletionChunks(['foo', 'bar'])),
-    )
+    const chunks = await collect(fromOpenAICompletionStream(openAICompletionChunks(['foo', 'bar'])))
     expect(chunks).toEqual(['foo', 'bar'])
   })
 })

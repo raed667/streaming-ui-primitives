@@ -8,8 +8,8 @@
  * Also demonstrates useDebouncedStreaming to smooth rapid status transitions.
  */
 import React, { useState } from 'react'
-import { useTokenStream, useDebouncedStreaming, StreamingText } from 'streaming-ui-primitives'
-import { fromFetchSSE } from 'streaming-ui-primitives/adapters'
+import { useTokenStream, useDebouncedStreaming, StreamingText } from '@raed667/streaming-ui-primitives'
+import { fromFetchSSE } from '@raed667/streaming-ui-primitives/adapters'
 
 export function AbortResetDemo() {
   const [source, setSource] = useState<AsyncIterable<string> | null>(null)

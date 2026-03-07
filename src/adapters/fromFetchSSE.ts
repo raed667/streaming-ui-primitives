@@ -40,11 +40,11 @@
  * ```
  */
 export type FetchSSEMode =
-  | 'auto'       // sniff the response: check Content-Type, fall through
-  | 'text'       // raw text/event-stream — yield each decoded chunk as-is
-  | 'sse-text'   // SSE with plain text in data fields (tokens must not contain \n — see above)
-  | 'sse-json'   // SSE with JSON objects; extract field by jsonPath
-  | 'vercel-ai'  // Vercel AI SDK data stream protocol (0:"token" lines)
+  | 'auto' // sniff the response: check Content-Type, fall through
+  | 'text' // raw text/event-stream — yield each decoded chunk as-is
+  | 'sse-text' // SSE with plain text in data fields (tokens must not contain \n — see above)
+  | 'sse-json' // SSE with JSON objects; extract field by jsonPath
+  | 'vercel-ai' // Vercel AI SDK data stream protocol (0:"token" lines)
 
 export interface FetchSSEOptions {
   mode?: FetchSSEMode
@@ -70,11 +70,7 @@ export async function* fromFetchSSE(
   const contentType = response.headers.get('content-type') ?? ''
 
   const resolvedMode: Exclude<FetchSSEMode, 'auto'> =
-    mode !== 'auto'
-      ? mode
-      : contentType.includes('text/event-stream')
-        ? 'sse-text'
-        : 'text'
+    mode !== 'auto' ? mode : contentType.includes('text/event-stream') ? 'sse-text' : 'text'
 
   const decoder = new TextDecoder()
   const reader = response.body.getReader()
@@ -114,7 +110,7 @@ export async function* fromFetchSSE(
         }
 
         if (!trimmed || trimmed.startsWith(':')) continue // empty / comment
-        if (trimmed === 'data: [DONE]') continue          // OpenAI terminator
+        if (trimmed === 'data: [DONE]') continue // OpenAI terminator
 
         if (trimmed.startsWith('data: ')) {
           const data = trimmed.slice(6)

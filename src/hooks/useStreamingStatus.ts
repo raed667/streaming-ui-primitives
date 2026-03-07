@@ -9,10 +9,7 @@ import { fromUseChatStatus } from '../types'
  * @param debounceMs  - how long to wait before declaring streaming stopped (default 150ms)
  * @returns stabilised boolean
  */
-export function useDebouncedStreaming(
-  isStreaming: boolean,
-  debounceMs = 150,
-): boolean {
+export function useDebouncedStreaming(isStreaming: boolean, debounceMs = 150): boolean {
   const [stable, setStable] = useState(isStreaming)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -23,7 +20,7 @@ export function useDebouncedStreaming(
         clearTimeout(timerRef.current)
         timerRef.current = null
       }
-      setStable(true)
+      setStable(true) // eslint-disable-line react-hooks/set-state-in-effect
     } else {
       // Delay the false transition
       timerRef.current = setTimeout(() => {

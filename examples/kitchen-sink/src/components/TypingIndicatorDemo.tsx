@@ -5,9 +5,9 @@
  * show TypingIndicator while a tool call is running.
  */
 import React, { useState } from 'react'
-import { TypingIndicator, useTokenStream, StreamingText } from 'streaming-ui-primitives'
-import { fromFetchSSE } from 'streaming-ui-primitives/adapters'
-import type { TypingIndicatorVariant } from 'streaming-ui-primitives'
+import { TypingIndicator, useTokenStream, StreamingText } from '@raed667/streaming-ui-primitives'
+import { fromFetchSSE } from '@raed667/streaming-ui-primitives/adapters'
+import type { TypingIndicatorVariant } from '@raed667/streaming-ui-primitives'
 
 const VARIANTS: TypingIndicatorVariant[] = ['dots', 'pulse', 'bar']
 

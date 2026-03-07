@@ -5,19 +5,13 @@ import { PartialRender } from './PartialRender'
 
 describe('PartialRender', () => {
   it('renders nothing when content is empty and no fallback', () => {
-    const { container } = render(
-      <PartialRender content="" renderer={c => <p>{c}</p>} />,
-    )
+    const { container } = render(<PartialRender content="" renderer={(c) => <p>{c}</p>} />)
     expect(container.firstChild).toBeNull()
   })
 
   it('renders fallback when content is empty', () => {
     render(
-      <PartialRender
-        content=""
-        renderer={c => <p>{c}</p>}
-        fallback={<span>Loading…</span>}
-      />,
+      <PartialRender content="" renderer={(c) => <p>{c}</p>} fallback={<span>Loading…</span>} />,
     )
     expect(screen.getByText('Loading…')).toBeInTheDocument()
   })
@@ -38,10 +32,7 @@ describe('PartialRender', () => {
 
   it('renders the output of the renderer', () => {
     render(
-      <PartialRender
-        content="**bold**"
-        renderer={c => <em data-testid="rendered">{c}</em>}
-      />,
+      <PartialRender content="**bold**" renderer={(c) => <em data-testid="rendered">{c}</em>} />,
     )
     expect(screen.getByTestId('rendered')).toBeInTheDocument()
     expect(screen.getByTestId('rendered').textContent).toBe('**bold**')
@@ -77,7 +68,7 @@ describe('PartialRender', () => {
     const { container } = render(
       <PartialRender
         content="hi"
-        renderer={c => <span>{c}</span>}
+        renderer={(c) => <span>{c}</span>}
         className="wrap"
         style={{ color: 'blue' }}
       />,

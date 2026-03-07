@@ -10,8 +10,8 @@
  * You can force the error state to test error handling.
  */
 import React, { useState } from 'react'
-import { useTokenStream, StreamGuard, StreamingText, TypingIndicator } from 'streaming-ui-primitives'
-import { fromFetchSSE } from 'streaming-ui-primitives/adapters'
+import { useTokenStream, StreamGuard, StreamingText, TypingIndicator } from '@raed667/streaming-ui-primitives'
+import { fromFetchSSE } from '@raed667/streaming-ui-primitives/adapters'
 
 export function StreamGuardDemo() {
   const [source, setSource] = useState<AsyncIterable<string> | null>(null)

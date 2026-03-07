@@ -13,8 +13,8 @@
  *   const { text } = useTokenStream(stream.textStream)  // stream.textStream is AsyncIterable<string>
  */
 import React, { useState, useRef } from 'react'
-import { useTokenStream, StreamGuard, StreamingText } from 'streaming-ui-primitives'
-import { fromAnthropicStream } from 'streaming-ui-primitives/adapters'
+import { useTokenStream, StreamGuard, StreamingText } from '@raed667/streaming-ui-primitives'
+import { fromAnthropicStream } from '@raed667/streaming-ui-primitives/adapters'
 
 interface Props {
   onComplete: (prompt: string, response: string) => void

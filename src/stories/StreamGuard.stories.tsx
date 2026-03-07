@@ -98,7 +98,7 @@ function LifecycleDemo() {
         setStatus('complete')
         return
       }
-      setText(prev => prev + (tokens[i] ?? '') + ' ')
+      setText((prev) => prev + (tokens[i] ?? '') + ' ')
       i++
       setTimeout(tick, 150)
     }
@@ -108,7 +108,7 @@ function LifecycleDemo() {
   return (
     <div style={{ fontFamily: 'sans-serif', width: 360 }}>
       <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
-        {STATUSES.map(s => (
+        {STATUSES.map((s) => (
           <button
             key={s}
             onClick={() => setStatus(s)}
@@ -140,14 +140,11 @@ function LifecycleDemo() {
           submitted={<span style={{ color: '#6b7280', fontStyle: 'italic' }}>Request sent…</span>}
           streaming={<TypingIndicator visible />}
           complete={<StreamingText content={text} isStreaming={false} as="span" />}
-          error={err => <span style={{ color: '#ef4444' }}>Error: {err?.message}</span>}
+          error={(err) => <span style={{ color: '#ef4444' }}>Error: {err?.message}</span>}
           errorValue={new Error('Demo error')}
         />
       </div>
-      <button
-        onClick={simulate}
-        style={{ marginTop: 12, padding: '6px 14px', cursor: 'pointer' }}
-      >
+      <button onClick={simulate} style={{ marginTop: 12, padding: '6px 14px', cursor: 'pointer' }}>
         Run simulation
       </button>
     </div>
@@ -159,7 +156,8 @@ export const LifecycleSimulation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Click the status buttons to jump between states, or Run simulation to watch the full lifecycle.',
+        story:
+          'Click the status buttons to jump between states, or Run simulation to watch the full lifecycle.',
       },
     },
   },

@@ -1,9 +1,4 @@
-import React, {
-  type ReactNode,
-  Component,
-  type ErrorInfo,
-  type ReactElement,
-} from 'react'
+import React, { type ReactNode, Component, type ErrorInfo, type ReactElement } from 'react'
 
 export interface PartialRenderProps {
   /**
@@ -64,10 +59,7 @@ interface ErrorBoundaryProps {
   resetKey: string
 }
 
-class RenderErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+class RenderErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {

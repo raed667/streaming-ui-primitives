@@ -42,7 +42,7 @@ export function partsToText(
  */
 export function hasActiveToolCall(parts: UIMessagePartCompat[]): boolean {
   return parts.some(
-    p =>
+    (p) =>
       p.type === 'tool-invocation' &&
       (p as { type: 'tool-invocation'; state: string }).state !== 'result',
   )

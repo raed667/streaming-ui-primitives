@@ -8,8 +8,8 @@
  * Also shows a custom cursor: cursor={<span>▋</span>}
  */
 import React, { useState } from 'react'
-import { useTokenStream, PartialRender, StreamingText } from 'streaming-ui-primitives'
-import { fromFetchSSE } from 'streaming-ui-primitives/adapters'
+import { useTokenStream, PartialRender, StreamingText } from '@raed667/streaming-ui-primitives'
+import { fromFetchSSE } from '@raed667/streaming-ui-primitives/adapters'
 import { marked } from 'marked'
 
 export function MarkdownDemo() {

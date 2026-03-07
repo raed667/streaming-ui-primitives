@@ -29,9 +29,7 @@ function chunkToText(chunk: unknown): string {
   return ''
 }
 
-export async function* fromLlamaIndexStream(
-  stream: AsyncIterable<unknown>,
-): AsyncIterable<string> {
+export async function* fromLlamaIndexStream(stream: AsyncIterable<unknown>): AsyncIterable<string> {
   for await (const chunk of stream) {
     const text = chunkToText(chunk)
     if (text.length > 0) yield text

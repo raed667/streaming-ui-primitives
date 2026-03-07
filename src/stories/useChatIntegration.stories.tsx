@@ -67,13 +67,10 @@ function UseChatSimulation() {
   // Derive the StreamStatus from the simulated useChat status.
   // 'idle' is not a UseChatStatus so we handle it separately.
   const streamStatus =
-    chatStatus === 'idle'
-      ? 'idle'
-      : fromUseChatStatus(chatStatus as UseChatStatus)
+    chatStatus === 'idle' ? 'idle' : fromUseChatStatus(chatStatus as UseChatStatus)
 
   const lastMsg = messages[messages.length - 1]
-  const assistantMsg =
-    lastMsg?.role === 'assistant' ? lastMsg : undefined
+  const assistantMsg = lastMsg?.role === 'assistant' ? lastMsg : undefined
   const { text } = useMessageStream(assistantMsg?.parts ?? [])
 
   function sendMessage() {
@@ -89,8 +86,8 @@ function UseChatSimulation() {
       const assistantId = 'assistant-1'
 
       // Add the assistant message with an empty parts array
-      setMessages(prev => [
-        ...prev.filter(m => m.id !== assistantId),
+      setMessages((prev) => [
+        ...prev.filter((m) => m.id !== assistantId),
         { id: assistantId, role: 'assistant', parts: [] },
       ])
 
@@ -109,11 +106,9 @@ function UseChatSimulation() {
         tokenIndex++
 
         const snapshot = accumulated
-        setMessages(prev =>
-          prev.map(m =>
-            m.id === assistantId
-              ? { ...m, parts: [{ type: 'text', text: snapshot }] }
-              : m,
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, parts: [{ type: 'text', text: snapshot }] } : m,
           ),
         )
 
@@ -131,11 +126,9 @@ function UseChatSimulation() {
     >
       {/* Status badge */}
       <div style={{ marginBottom: 10, fontSize: 12, color: '#6b7280' }}>
-        useChat status:{' '}
-        <strong style={{ color: '#111827' }}>{chatStatus}</strong>
+        useChat status: <strong style={{ color: '#111827' }}>{chatStatus}</strong>
         {' · '}
-        StreamStatus:{' '}
-        <strong style={{ color: '#3b82f6' }}>{streamStatus}</strong>
+        StreamStatus: <strong style={{ color: '#3b82f6' }}>{streamStatus}</strong>
       </div>
 
       {/* Chat bubble area */}
@@ -185,7 +178,7 @@ function UseChatSimulation() {
               )}
             />
           }
-          error={err => (
+          error={(err) => (
             <span style={{ color: '#ef4444' }}>
               Error: {err?.message ?? 'Something went wrong'}
             </span>
@@ -199,12 +192,8 @@ function UseChatSimulation() {
         disabled={chatStatus === 'submitted' || chatStatus === 'streaming'}
         style={{
           padding: '6px 16px',
-          cursor:
-            chatStatus === 'submitted' || chatStatus === 'streaming'
-              ? 'default'
-              : 'pointer',
-          opacity:
-            chatStatus === 'submitted' || chatStatus === 'streaming' ? 0.5 : 1,
+          cursor: chatStatus === 'submitted' || chatStatus === 'streaming' ? 'default' : 'pointer',
+          opacity: chatStatus === 'submitted' || chatStatus === 'streaming' ? 0.5 : 1,
         }}
       >
         {chatStatus === 'submitted'

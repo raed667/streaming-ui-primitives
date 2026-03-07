@@ -83,9 +83,15 @@ function markdownRenderer(content: string) {
   const html = content
     .replace(/^# (.+)$/m, '<h1 style="margin:0 0 8px">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">$1</code>')
+    .replace(
+      /`([^`]+)`/g,
+      '<code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">$1</code>',
+    )
     .replace(/^- (.+)$/gm, '<li>$1</li>')
-    .replace(/^> (.+)$/gm, '<blockquote style="border-left:3px solid #e5e7eb;margin:0;padding-left:12px;color:#6b7280">$1</blockquote>')
+    .replace(
+      /^> (.+)$/gm,
+      '<blockquote style="border-left:3px solid #e5e7eb;margin:0;padding-left:12px;color:#6b7280">$1</blockquote>',
+    )
 
   return (
     <div
@@ -111,6 +117,7 @@ function StreamingMarkdownDemo() {
   useEffect(() => {
     if (!running) return
     if (indexRef.current >= FULL_MARKDOWN.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRunning(false)
       setIsComplete(true)
       return
@@ -154,9 +161,7 @@ function StreamingMarkdownDemo() {
           {running ? 'Streaming…' : 'Stream'}
         </button>
         {isComplete && (
-          <span style={{ fontSize: 12, color: '#10b981', fontFamily: 'sans-serif' }}>
-            Complete
-          </span>
+          <span style={{ fontSize: 12, color: '#10b981', fontFamily: 'sans-serif' }}>Complete</span>
         )}
       </div>
     </div>
@@ -186,12 +191,14 @@ function OnRenderErrorDemo() {
       <PartialRender
         content="content that will always fail to render"
         isComplete={false}
-        renderer={() => { throw new Error('Simulated parse error') }}
+        renderer={() => {
+          throw new Error('Simulated parse error')
+        }}
         errorFallback={(_err, raw) => (
           <span style={{ color: '#6b7280', fontStyle: 'italic' }}>{raw}</span>
         )}
         onRenderError={(err, content) => {
-          setErrorLog(prev => [
+          setErrorLog((prev) => [
             ...prev.slice(-4),
             `[${new Date().toLocaleTimeString()}] ${err.message} (content: "${content.slice(0, 20)}…")`,
           ])
@@ -210,10 +217,11 @@ function OnRenderErrorDemo() {
         }}
       >
         <div style={{ color: '#585b70', marginBottom: 6 }}>// onRenderError log</div>
-        {errorLog.length === 0
-          ? <span style={{ color: '#585b70' }}>No errors yet (renders once on mount)</span>
-          : errorLog.map((entry, i) => <div key={i}>{entry}</div>)
-        }
+        {errorLog.length === 0 ? (
+          <span style={{ color: '#585b70' }}>No errors yet (renders once on mount)</span>
+        ) : (
+          errorLog.map((entry, i) => <div key={i}>{entry}</div>)
+        )}
       </div>
     </div>
   )

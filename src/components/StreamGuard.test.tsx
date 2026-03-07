@@ -26,13 +26,7 @@ describe('StreamGuard', () => {
 
   it('renders error slot as function with errorValue', () => {
     const err = new Error('fail')
-    render(
-      <StreamGuard
-        status="error"
-        error={e => <p>{e?.message}</p>}
-        errorValue={err}
-      />,
-    )
+    render(<StreamGuard status="error" error={(e) => <p>{e?.message}</p>} errorValue={err} />)
     expect(screen.getByText('fail')).toBeInTheDocument()
   })
 

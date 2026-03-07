@@ -59,7 +59,7 @@ export const AllVariants: Story = {
 export const InheritedColor: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '24px' }}>
-      {(['#3b82f6', '#10b981', '#f59e0b', '#ef4444'] as const).map(color => (
+      {(['#3b82f6', '#10b981', '#f59e0b', '#ef4444'] as const).map((color) => (
         <span key={color} style={{ color }}>
           <TypingIndicator visible variant="dots" />
         </span>

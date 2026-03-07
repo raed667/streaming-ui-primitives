@@ -94,12 +94,7 @@ export function StreamingText({
     ensureCursorStyle()
   }
 
-  const cursorNode =
-    showCursor
-      ? cursor === true
-        ? DEFAULT_CURSOR
-        : cursor
-      : null
+  const cursorNode = showCursor ? (cursor === true ? DEFAULT_CURSOR : cursor) : null
 
   return (
     <Tag className={className} style={style}>

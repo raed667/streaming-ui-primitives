@@ -45,9 +45,29 @@ export const CursorHiddenWhenDone: Story = {
 }
 
 const SAMPLE_TOKENS = [
-  'The ', 'quick ', 'brown ', 'fox ', 'jumps ', 'over ', 'the ', 'lazy ', 'dog. ',
-  'Streaming ', 'token ', 'by ', 'token ', 'is ', 'what ', 'we ', 'do ',
-  'here — ', 'one ', 'chunk ', 'at ', 'a ', 'time.',
+  'The ',
+  'quick ',
+  'brown ',
+  'fox ',
+  'jumps ',
+  'over ',
+  'the ',
+  'lazy ',
+  'dog. ',
+  'Streaming ',
+  'token ',
+  'by ',
+  'token ',
+  'is ',
+  'what ',
+  'we ',
+  'do ',
+  'here — ',
+  'one ',
+  'chunk ',
+  'at ',
+  'a ',
+  'time.',
 ]
 
 function LiveStreamDemo({ speed = 80 }: { speed?: number }) {
@@ -66,13 +86,18 @@ function LiveStreamDemo({ speed = 80 }: { speed?: number }) {
         return
       }
       const token = SAMPLE_TOKENS[i++] ?? ''
-      setText(prev => prev + token)
+      setText((prev) => prev + token)
       timerRef.current = setTimeout(tick, speed)
     }
     timerRef.current = setTimeout(tick, speed)
   }
 
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current) }, [])
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    },
+    [],
+  )
 
   return (
     <div style={{ maxWidth: 480 }} data-streaming={streaming ? 'true' : 'false'}>

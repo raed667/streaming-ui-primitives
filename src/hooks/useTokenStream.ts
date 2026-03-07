@@ -126,7 +126,6 @@ export function useTokenStream(
     return () => {
       ac.abort()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source])
 
   return {

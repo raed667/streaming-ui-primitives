@@ -35,16 +35,14 @@ function chunkToText(chunk: unknown): string {
 
   if (Array.isArray(c?.content)) {
     return c.content
-      .map(part => (part.type === 'text' && part.text != null ? part.text : ''))
+      .map((part) => (part.type === 'text' && part.text != null ? part.text : ''))
       .join('')
   }
 
   return String(chunk)
 }
 
-export async function* fromLangChainStream(
-  stream: AsyncIterable<unknown>,
-): AsyncIterable<string> {
+export async function* fromLangChainStream(stream: AsyncIterable<unknown>): AsyncIterable<string> {
   for await (const chunk of stream) {
     const text = chunkToText(chunk)
     if (text.length > 0) yield text

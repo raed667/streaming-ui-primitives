@@ -13,7 +13,7 @@
  */
 import React, { useState } from 'react'
 import { ModeDemo } from './components/ModeDemo'
-import type { FetchSSEMode } from 'streaming-ui-primitives/adapters'
+import type { FetchSSEMode } from '@raed667/streaming-ui-primitives/adapters'
 
 const MODES: { mode: FetchSSEMode; label: string; description: string }[] = [
   {

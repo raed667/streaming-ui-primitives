@@ -12,8 +12,8 @@
  * and attaches source URLs.
  */
 import React, { useState } from 'react'
-import { useMessageStream, StreamingText, TypingIndicator } from 'streaming-ui-primitives'
-import type { UIMessagePartCompat } from 'streaming-ui-primitives'
+import { useMessageStream, StreamingText, TypingIndicator } from '@raed667/streaming-ui-primitives'
+import type { UIMessagePartCompat } from '@raed667/streaming-ui-primitives'
 
 export function ReasoningDemo() {
   const [parts, setParts] = useState<UIMessagePartCompat[]>([])

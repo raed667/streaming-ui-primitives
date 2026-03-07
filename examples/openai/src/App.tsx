@@ -13,8 +13,8 @@
  * Set USE_REAL_SDK=true in .env to use the real OpenAI API.
  */
 import React, { useState, useCallback, useRef } from 'react'
-import { useTokenStream, StreamGuard, StreamingText } from 'streaming-ui-primitives'
-import { fromOpenAIChatStream } from 'streaming-ui-primitives/adapters'
+import { useTokenStream, StreamGuard, StreamingText } from '@raed667/streaming-ui-primitives'
+import { fromOpenAIChatStream } from '@raed667/streaming-ui-primitives/adapters'
 
 interface Message {
   id: string

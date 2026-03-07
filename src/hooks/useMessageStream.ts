@@ -32,9 +32,7 @@ export interface UseMessageStreamResult {
  * const { text } = useMessageStream([{ type: 'text', text: 'hello' }])
  * ```
  */
-export function useMessageStream(
-  parts: UIMessagePartCompat[],
-): UseMessageStreamResult {
+export function useMessageStream(parts: UIMessagePartCompat[]): UseMessageStreamResult {
   return useMemo(() => {
     let text = ''
     let reasoning = ''

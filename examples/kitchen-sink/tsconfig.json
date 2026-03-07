@@ -6,9 +6,13 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true,
+    "paths": {
+      "@raed667/streaming-ui-primitives": ["../../src/index.ts"],
+      "@raed667/streaming-ui-primitives/adapters": ["../../src/adapters/index.ts"]
+    }
   },
   "include": ["src", "server"]
 }

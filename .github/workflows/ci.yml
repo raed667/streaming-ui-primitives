@@ -28,9 +28,6 @@ jobs:
 
       - run: pnpm typecheck
 
-      - name: Build library (required for examples typecheck)
-        run: pnpm build
-
       - run: pnpm typecheck:examples
 
       - run: pnpm test

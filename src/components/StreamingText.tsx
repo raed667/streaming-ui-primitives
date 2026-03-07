@@ -71,14 +71,18 @@ function ensureCursorStyle() {
  * This component is **unstyled** — no fonts, colors, or layout are applied.
  *
  * @example
+ * ```tsx
  * // With useTokenStream
  * const { text, isStreaming } = useTokenStream(myStream)
  * <StreamingText content={text} isStreaming={isStreaming} cursor />
+ * ```
  *
  * @example
+ * ```tsx
  * // With Vercel AI SDK useChat
  * const { text } = useMessageStream(message.parts)
  * <StreamingText content={text} isStreaming={status === 'streaming'} cursor />
+ * ```
  */
 export function StreamingText({
   content,

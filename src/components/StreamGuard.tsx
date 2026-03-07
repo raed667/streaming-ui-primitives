@@ -37,6 +37,7 @@ export interface StreamGuardProps {
  * Think of it as a type-safe switch/case over stream lifecycle states.
  *
  * @example
+ * ```tsx
  * // Basic usage with useTokenStream
  * const { status } = useTokenStream(myStream)
  *
@@ -47,8 +48,10 @@ export interface StreamGuardProps {
  *   complete={<StreamingText content={text} />}
  *   error={(err) => <p>Error: {err?.message}</p>}
  * />
+ * ```
  *
  * @example
+ * ```tsx
  * // With Vercel AI SDK useChat
  * const { status } = useChat(...)
  * const streamStatus = fromUseChatStatus(status)
@@ -58,6 +61,7 @@ export interface StreamGuardProps {
  *   streaming={<TypingIndicator visible />}
  *   complete={<div>{messages.map(...)}</div>}
  * />
+ * ```
  */
 export function StreamGuard({
   status,

@@ -2,22 +2,41 @@ import type { Meta, StoryObj } from '@storybook/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { PartialRender } from '../components/PartialRender'
 
+const plainTextRenderer = (content: string) => (
+  <p style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', margin: 0 }}>{content}</p>
+)
+
 const meta: Meta<typeof PartialRender> = {
   title: 'Primitives/PartialRender',
   component: PartialRender,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Gracefully renders partial/incomplete content during streaming. ' +
+          'Wraps the renderer in an error boundary to catch parse errors mid-stream ' +
+          '(e.g. markdown parsers choking on incomplete syntax) and falls back to plain text. ' +
+          'Renderer-agnostic — pass any `(content: string, isComplete: boolean) => ReactNode` function.',
+      },
+    },
+  },
   argTypes: {
     content: { control: 'text' },
     isComplete: { control: 'boolean' },
+    renderer: { control: false },
+    errorFallback: { control: false },
+    fallback: { control: false },
+    onRenderError: { control: false },
+  },
+  args: {
+    renderer: plainTextRenderer,
+    content: '',
   },
 }
 export default meta
 
 type Story = StoryObj<typeof PartialRender>
-
-const plainTextRenderer = (content: string) => (
-  <p style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', margin: 0 }}>{content}</p>
-)
 
 export const PlainText: Story = {
   args: {

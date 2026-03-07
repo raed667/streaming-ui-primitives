@@ -120,8 +120,10 @@ function BarVariant() {
  * the parent so it naturally fits any theme.
  *
  * @example
+ * ```tsx
  * <TypingIndicator visible={status === 'streaming'} />
  * <TypingIndicator visible={isLoading} variant="pulse" />
+ * ```
  */
 export function TypingIndicator({
   visible,

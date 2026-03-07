@@ -10,16 +10,6 @@ export interface PartialRenderProps {
    * Custom render function. Called with the current content and whether
    * the stream is complete. Use `isComplete` to decide how aggressively
    * to parse — e.g. skip closing markdown fences during streaming.
-   *
-   * @example
-   * // With marked:
-   * renderer={(content, isComplete) => (
-   *   <div dangerouslySetInnerHTML={{ __html: marked(content) }} />
-   * )}
-   *
-   * @example
-   * // Plain text fallback:
-   * renderer={(content) => <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p>}
    */
   renderer: (content: string, isComplete: boolean) => ReactNode
   /**
@@ -71,7 +61,11 @@ class RenderErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
     if (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>)['__DEV__']) {
       console.warn('[PartialRender] Renderer threw during streaming:', error, info)
     }
-    this.props.onRenderError?.(error, this.props.content)
+    // Schedule outside the commit phase so callers can safely call setState
+    const { onRenderError, content } = this.props
+    if (onRenderError) {
+      setTimeout(() => onRenderError(error, content), 0)
+    }
   }
 
   componentDidUpdate(prevProps: ErrorBoundaryProps) {
@@ -120,19 +114,6 @@ function RendererInvoker({ renderer, content, isComplete }: RendererInvokerProps
  *
  * This component is **renderer-agnostic** — pass any render function to keep
  * the bundle size near zero.
- *
- * @example
- * // Stream markdown with the `marked` library
- * import { marked } from 'marked'
- *
- * <PartialRender
- *   content={streamingText}
- *   isComplete={status === 'complete'}
- *   renderer={(content, isComplete) => (
- *     <div dangerouslySetInnerHTML={{ __html: marked(content) }} />
- *   )}
- *   fallback={<span>Thinking...</span>}
- * />
  */
 export function PartialRender({
   content,

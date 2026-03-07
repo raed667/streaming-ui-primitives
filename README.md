@@ -183,6 +183,7 @@ Status-driven render slots — a type-safe switch/case over stream lifecycle sta
 
 ```tsx
 import { StreamGuard } from '@raed667/streaming-ui-primitives'
+
 ;<StreamGuard
   status={status}
   idle={<p>Ask me anything...</p>}
@@ -339,6 +340,7 @@ Returns `true` if any `tool-invocation` part is in a non-result state.
 import { hasActiveToolCall } from '@raed667/streaming-ui-primitives/adapters'
 
 const isToolRunning = hasActiveToolCall(message.parts)
+
 <TypingIndicator visible={isToolRunning} aria-label="Running tool..." />
 ```
 

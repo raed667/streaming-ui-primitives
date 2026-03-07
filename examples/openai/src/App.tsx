@@ -147,7 +147,7 @@ export function App() {
             </button>
           </div>
         }
-        error={(err) => (
+        error={(err: Error | null) => (
           <div style={styles.errorBox}>
             <p style={styles.errorText}>Error: {err?.message ?? 'Unknown error'}</p>
             <button onClick={() => { reset(); setCurrentPrompt('') }} style={styles.abortBtn}>Dismiss</button>

@@ -81,7 +81,7 @@ export function StreamGuardDemo() {
               <p style={styles.hint}>{text.length} characters received.</p>
             </div>
           }
-          error={(err) => (
+          error={(err: Error | null) => (
             <div style={styles.errorSlot}>
               <p style={styles.errorTag}>Error</p>
               <p style={styles.errorMessage}>{err?.message ?? 'An unknown error occurred'}</p>

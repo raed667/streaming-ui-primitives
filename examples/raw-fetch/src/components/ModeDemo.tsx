@@ -72,7 +72,7 @@ export function ModeDemo({ mode }: Props) {
             </p>
           </div>
         }
-        error={(err) => (
+        error={(err: Error | null) => (
           <p style={styles.error}>Error: {err?.message ?? "Unknown error"}</p>
         )}
         errorValue={error}

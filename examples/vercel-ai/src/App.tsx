@@ -237,7 +237,7 @@ export function App() {
                 />
               }
               complete={<p style={styles.messageText}>{text}</p>}
-              error={(err) => (
+              error={(err: Error | null) => (
                 <p style={{ ...styles.messageText, color: "#ef4444" }}>
                   Error: {err?.message ?? "Unknown error"}
                 </p>

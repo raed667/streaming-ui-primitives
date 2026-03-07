@@ -118,7 +118,7 @@ export function ChatBox({ onComplete }: Props) {
             </div>
           </div>
         }
-        error={(err) => (
+        error={(err: Error | null) => (
           <div style={styles.errorBox}>
             <p style={styles.errorText}>Error: {err?.message ?? 'Unknown error'}</p>
             <button onClick={handleReset} style={styles.resetBtn}>Retry</button>

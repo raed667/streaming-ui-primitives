@@ -22,7 +22,7 @@
   "author": "Raed Chammam",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raed667/streaming-ui-primitives"
+    "url": "git+https://github.com/raed667/streaming-ui-primitives.git"
   },
   "homepage": "https://github.com/raed667/streaming-ui-primitives#readme",
   "bugs": {

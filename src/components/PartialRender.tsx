@@ -42,6 +42,12 @@ export interface PartialRenderProps {
    * If not provided, the raw content is shown as a plain-text fallback.
    */
   errorFallback?: ReactNode | ((error: Error, content: string) => ReactNode)
+  /**
+   * Called when the renderer throws (error boundary fires).
+   * Useful for logging or analytics — fired on every render cycle that throws,
+   * not just the first.
+   */
+  onRenderError?: (error: Error, content: string) => void
   className?: string
   style?: React.CSSProperties
 }
@@ -53,6 +59,7 @@ interface ErrorBoundaryState {
 interface ErrorBoundaryProps {
   content: string
   fallback: ReactNode | ((error: Error, content: string) => ReactNode) | undefined
+  onRenderError: ((error: Error, content: string) => void) | undefined
   children: ReactNode
   resetKey: string
 }
@@ -72,6 +79,7 @@ class RenderErrorBoundary extends Component<
     if (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>)['__DEV__']) {
       console.warn('[PartialRender] Renderer threw during streaming:', error, info)
     }
+    this.props.onRenderError?.(error, this.props.content)
   }
 
   componentDidUpdate(prevProps: ErrorBoundaryProps) {
@@ -140,6 +148,7 @@ export function PartialRender({
   isComplete = true,
   fallback,
   errorFallback,
+  onRenderError,
   className,
   style,
 }: PartialRenderProps) {
@@ -152,6 +161,7 @@ export function PartialRender({
       <RenderErrorBoundary
         content={content}
         fallback={errorFallback}
+        onRenderError={onRenderError}
         resetKey={content.length === 0 ? 'empty' : 'content'}
       >
         <RendererInvoker renderer={renderer} content={content} isComplete={isComplete} />

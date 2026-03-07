@@ -24,6 +24,10 @@ test.describe('Vercel AI SDK useChat integration', () => {
     // Trigger simulation
     await page.getByRole('button', { name: 'Send message' }).click()
 
+    // Briefly enters submitted state (request sent, no tokens yet)
+    await expect(container).toHaveAttribute('data-status', 'submitted', { timeout: 1000 })
+    await expect(root).toContainText('waiting for first token')
+
     // Moves through streaming
     await expect(container).toHaveAttribute('data-status', 'streaming', { timeout: 2000 })
 

@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { useTokenStream } from './useTokenStream'
 
 // Helpers ---------------------------------------------------------------
@@ -121,5 +121,66 @@ describe('useTokenStream', () => {
     expect(result.current.status).toBe('idle')
     expect(result.current.text).toBe('')
     expect(result.current.error).toBeNull()
+  })
+
+  it('tracks tokenCount correctly', async () => {
+    const source = asyncTokens(['one', 'two', 'three'])
+    const { result } = renderHook(() => useTokenStream(source))
+
+    await waitFor(() => expect(result.current.status).toBe('complete'), { timeout: 3000 })
+
+    expect(result.current.tokenCount).toBe(3)
+    expect(result.current.text).toBe('onetwothree')
+  })
+
+  it('resets tokenCount to 0 on reset()', async () => {
+    const source = asyncTokens(['a', 'b'])
+    const { result } = renderHook(() => useTokenStream(source))
+
+    await waitFor(() => expect(result.current.status).toBe('complete'), { timeout: 3000 })
+    expect(result.current.tokenCount).toBe(2)
+
+    act(() => result.current.reset())
+    expect(result.current.tokenCount).toBe(0)
+  })
+
+  it('calls onToken for each token', async () => {
+    const onToken = vi.fn()
+    const source = asyncTokens(['x', 'y', 'z'])
+    const { result } = renderHook(() => useTokenStream(source, { onToken }))
+
+    await waitFor(() => expect(result.current.status).toBe('complete'), { timeout: 3000 })
+
+    expect(onToken).toHaveBeenCalledTimes(3)
+    expect(onToken).toHaveBeenNthCalledWith(1, 'x')
+    expect(onToken).toHaveBeenNthCalledWith(2, 'y')
+    expect(onToken).toHaveBeenNthCalledWith(3, 'z')
+  })
+
+  it('calls onComplete with full text when stream finishes', async () => {
+    const onComplete = vi.fn()
+    const source = asyncTokens(['hello', ' world'])
+    const { result } = renderHook(() => useTokenStream(source, { onComplete }))
+
+    await waitFor(() => expect(result.current.status).toBe('complete'), { timeout: 3000 })
+
+    expect(onComplete).toHaveBeenCalledOnce()
+    expect(onComplete).toHaveBeenCalledWith('hello world')
+  })
+
+  it('calls onError when stream throws', async () => {
+    const onError = vi.fn()
+    async function* failingStream(): AsyncIterable<string> {
+      yield 'partial'
+      throw new Error('oops')
+    }
+    const source = failingStream()
+    const { result } = renderHook(() => useTokenStream(source, { onError }))
+
+    await waitFor(() => expect(result.current.status).toBe('error'), { timeout: 3000 })
+
+    expect(onError).toHaveBeenCalledOnce()
+    expect(onError.mock.calls[0]![0]).toBeInstanceOf(Error)
+    expect((onError.mock.calls[0]![0] as Error).message).toBe('oops')
   })
 })

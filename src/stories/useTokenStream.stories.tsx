@@ -13,7 +13,8 @@ const meta: Meta = {
       description: {
         component:
           '`useTokenStream` is the core hook. It accepts any `AsyncIterable<string>` or ' +
-          '`ReadableStream<Uint8Array>` and returns `{ text, isStreaming, status, error, reset }`. ' +
+          '`ReadableStream<Uint8Array>` and returns `{ text, tokenCount, isStreaming, status, error, abort, reset }`. ' +
+          'Accepts an optional `options` bag with `onToken`, `onComplete`, and `onError` callbacks. ' +
           'This story demonstrates it with a simulated async generator.',
       },
     },
@@ -35,7 +36,7 @@ async function* simulateStream(delayMs: number): AsyncIterable<string> {
 
 function TokenStreamDemo({ speed = 80 }: { speed?: number }) {
   const [source, setSource] = useState<AsyncIterable<string> | null>(null)
-  const { text, status, error, reset } = useTokenStream(source)
+  const { text, tokenCount, status, error, reset } = useTokenStream(source)
 
   function start() {
     reset()
@@ -89,7 +90,7 @@ function TokenStreamDemo({ speed = 80 }: { speed?: number }) {
         </button>
         <span style={{ fontSize: 12, color: '#6b7280' }}>
           status: <strong>{status}</strong>
-          {text.length > 0 && ` · ${text.length} chars`}
+          {tokenCount > 0 && ` · ${tokenCount} tokens · ${text.length} chars`}
         </span>
       </div>
     </div>
@@ -167,6 +168,91 @@ export const ErrorHandling: Story = {
     docs: {
       description: {
         story: 'The stream throws mid-way. `status` transitions to `error` and `error` holds the thrown value.',
+      },
+    },
+  },
+}
+
+// ---------------------------------------------------------------------------
+// Callbacks demo — onToken / onComplete / onError
+// ---------------------------------------------------------------------------
+
+function CallbacksDemo() {
+  const [source, setSource] = useState<AsyncIterable<string> | null>(null)
+  const [log, setLog] = useState<string[]>([])
+
+  const { text, tokenCount, status, reset } = useTokenStream(source, {
+    onToken: (token) => setLog(prev => [...prev, `onToken("${token.trim()}")`]),
+    onComplete: (fullText) => setLog(prev => [...prev, `onComplete(${fullText.length} chars)`]),
+    onError: (err) => setLog(prev => [...prev, `onError("${err.message}")`]),
+  })
+
+  function start() {
+    setLog([])
+    reset()
+    setSource(simulateStream(100))
+  }
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', width: 480 }}>
+      <div
+        style={{
+          border: '1px solid #e5e7eb',
+          borderRadius: 8,
+          padding: 16,
+          minHeight: 60,
+          background: '#fafafa',
+          marginBottom: 12,
+          fontSize: 14,
+          color: '#111827',
+        }}
+      >
+        {text || <span style={{ color: '#9ca3af' }}>Press Start…</span>}
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <button
+          onClick={start}
+          disabled={status === 'streaming'}
+          style={{ padding: '6px 16px', cursor: status === 'streaming' ? 'default' : 'pointer' }}
+        >
+          {status === 'streaming' ? `Streaming… (${tokenCount})` : 'Start'}
+        </button>
+        <button onClick={() => { setLog([]); reset(); setSource(null) }} style={{ padding: '6px 16px', cursor: 'pointer' }}>
+          Reset
+        </button>
+      </div>
+
+      <div
+        style={{
+          background: '#1e1e2e',
+          borderRadius: 8,
+          padding: '10px 14px',
+          maxHeight: 200,
+          overflowY: 'auto',
+          fontFamily: 'ui-monospace, monospace',
+          fontSize: 12,
+          color: '#cdd6f4',
+        }}
+      >
+        {log.length === 0
+          ? <span style={{ color: '#585b70' }}>// callbacks will appear here</span>
+          : log.map((entry, i) => <div key={i}>{entry}</div>)
+        }
+      </div>
+    </div>
+  )
+}
+
+export const Callbacks: Story = {
+  render: () => <CallbacksDemo />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The optional `options` bag accepts `onToken`, `onComplete`, and `onError`. ' +
+          'Each fires at the appropriate lifecycle moment. Callbacks always use the latest reference ' +
+          'via an internal ref — no stale closure risk.',
       },
     },
   },

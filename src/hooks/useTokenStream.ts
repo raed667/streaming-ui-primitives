@@ -1,9 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { StreamStatus, TokenSource } from '../types'
 
+export interface UseTokenStreamOptions {
+  /**
+   * Called each time a new token arrives.
+   * Stable reference recommended (useCallback), but the hook always uses the
+   * latest value via a ref so stale-closure bugs are avoided.
+   */
+  onToken?: (token: string) => void
+  /**
+   * Called once when the stream completes successfully, with the full text.
+   */
+  onComplete?: (text: string) => void
+  /**
+   * Called if the stream errors. Receives the error object.
+   */
+  onError?: (error: Error) => void
+}
+
 export interface UseTokenStreamResult {
   /** Full accumulated text so far */
   text: string
+  /** Number of tokens received so far */
+  tokenCount: number
   /** Whether a stream is actively producing tokens */
   isStreaming: boolean
   status: StreamStatus
@@ -30,12 +49,22 @@ export interface UseTokenStreamResult {
  */
 export function useTokenStream(
   source: TokenSource | null | undefined,
+  options?: UseTokenStreamOptions,
 ): UseTokenStreamResult {
   const [text, setText] = useState('')
+  const [tokenCount, setTokenCount] = useState(0)
   const [status, setStatus] = useState<StreamStatus>('idle')
   const [error, setError] = useState<Error | null>(null)
   // Ref to abort in-flight consumption on source change / unmount
   const abortRef = useRef<AbortController | null>(null)
+  // Always-current refs for callbacks — avoids stale closures without
+  // requiring stable references from the caller.
+  const onTokenRef = useRef(options?.onToken)
+  const onCompleteRef = useRef(options?.onComplete)
+  const onErrorRef = useRef(options?.onError)
+  onTokenRef.current = options?.onToken
+  onCompleteRef.current = options?.onComplete
+  onErrorRef.current = options?.onError
 
   const abort = useCallback(() => {
     abortRef.current?.abort()
@@ -48,6 +77,7 @@ export function useTokenStream(
     abortRef.current?.abort()
     abortRef.current = null
     setText('')
+    setTokenCount(0)
     setStatus('idle')
     setError(null)
   }, [])
@@ -63,23 +93,31 @@ export function useTokenStream(
     abortRef.current = ac
 
     setText('')
+    setTokenCount(0)
     setStatus('streaming')
     setError(null)
 
     async function consume() {
       try {
         const iterable = toAsyncIterable(source!)
+        let accumulated = ''
         for await (const chunk of iterable) {
           if (ac.signal.aborted) return
+          accumulated += chunk
           setText(prev => prev + chunk)
+          setTokenCount(prev => prev + 1)
+          onTokenRef.current?.(chunk)
         }
         if (!ac.signal.aborted) {
           setStatus('complete')
+          onCompleteRef.current?.(accumulated)
         }
       } catch (err) {
         if (ac.signal.aborted) return
-        setError(err instanceof Error ? err : new Error(String(err)))
+        const e = err instanceof Error ? err : new Error(String(err))
+        setError(e)
         setStatus('error')
+        onErrorRef.current?.(e)
       }
     }
 
@@ -93,6 +131,7 @@ export function useTokenStream(
 
   return {
     text,
+    tokenCount,
     isStreaming: status === 'streaming',
     status,
     error,

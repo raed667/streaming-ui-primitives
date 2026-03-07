@@ -21,11 +21,29 @@
  * }
  */
 
+/**
+ * `sse-text` limitation: tokens must not contain literal newlines (`\n`).
+ *
+ * SSE frames are delimited by `\n\n`. A token with an embedded newline will be
+ * split into multiple lines — the `data:` prefix is stripped from the first
+ * line only, so continuation lines are silently dropped.
+ *
+ * If your tokens may contain newlines (e.g. markdown), use `sse-json` and
+ * JSON-encode each token on the server:
+ *
+ * ```ts
+ * // server
+ * res.write(`data: ${JSON.stringify({ text: token })}\n\n`)
+ *
+ * // client
+ * fromFetchSSE(res, { mode: 'sse-json', jsonPath: 'text' })
+ * ```
+ */
 export type FetchSSEMode =
   | 'auto'       // sniff the response: check Content-Type, fall through
   | 'text'       // raw text/event-stream — yield each decoded chunk as-is
-  | 'sse-text'   // SSE with plain text in data fields
-  | 'sse-json'   // SSE with JSON objects; extract `token` or `text` or `content` field
+  | 'sse-text'   // SSE with plain text in data fields (tokens must not contain \n — see above)
+  | 'sse-json'   // SSE with JSON objects; extract field by jsonPath
   | 'vercel-ai'  // Vercel AI SDK data stream protocol (0:"token" lines)
 
 export interface FetchSSEOptions {

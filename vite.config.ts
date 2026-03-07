@@ -8,8 +8,7 @@ export default defineConfig({
     react(),
     dts({
       include: ['src'],
-      exclude: ['**/*.test.ts', '**/*.test.tsx'],
-      rollupTypes: true,
+      exclude: ['**/*.test.ts', '**/*.test.tsx', 'src/stories'],
     }),
   ],
   build: {

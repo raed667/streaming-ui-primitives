@@ -55,6 +55,7 @@
     "test:e2e:ci": "pnpm build:storybook && playwright test",
     "test:all": "pnpm test && pnpm test:e2e",
     "typecheck": "tsc --noEmit",
+    "typecheck:examples": "pnpm -r --filter './examples/*' exec tsc --noEmit",
     "lint": "eslint src --ext ts,tsx",
     "prepublishOnly": "pnpm build"
   },

@@ -52,9 +52,9 @@ describe('useDebouncedStreaming', () => {
 })
 
 describe('useAISDKStatus', () => {
-  it('maps submitted → streaming', () => {
+  it('maps submitted → submitted', () => {
     const { result } = renderHook(() => useAISDKStatus('submitted'))
-    expect(result.current).toBe('streaming')
+    expect(result.current).toBe('submitted')
   })
 
   it('maps streaming → streaming', () => {
@@ -75,7 +75,7 @@ describe('useAISDKStatus', () => {
 
 describe('fromUseChatStatus (pure function)', () => {
   it.each([
-    ['submitted', 'streaming'],
+    ['submitted', 'submitted'],
     ['streaming', 'streaming'],
     ['ready', 'complete'],
     ['error', 'error'],

@@ -54,4 +54,19 @@ describe('StreamGuard', () => {
     expect(screen.queryByText('idle')).not.toBeInTheDocument()
     expect(screen.queryByText('complete')).not.toBeInTheDocument()
   })
+
+  it('renders submitted slot when status=submitted', () => {
+    render(<StreamGuard status="submitted" submitted={<p>Waiting…</p>} />)
+    expect(screen.getByText('Waiting…')).toBeInTheDocument()
+  })
+
+  it('falls back to streaming slot when status=submitted and no submitted slot provided', () => {
+    render(<StreamGuard status="submitted" streaming={<p>Streaming…</p>} />)
+    expect(screen.getByText('Streaming…')).toBeInTheDocument()
+  })
+
+  it('renders nothing for submitted when neither submitted nor streaming provided', () => {
+    const { container } = render(<StreamGuard status="submitted" />)
+    expect(container.firstChild).toBeNull()
+  })
 })

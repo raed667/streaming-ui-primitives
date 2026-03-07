@@ -12,7 +12,7 @@ const meta: Meta<typeof StreamGuard> = {
   argTypes: {
     status: {
       control: 'select',
-      options: ['idle', 'streaming', 'complete', 'error'],
+      options: ['idle', 'submitted', 'streaming', 'complete', 'error'],
     },
   },
 }
@@ -24,6 +24,20 @@ export const Idle: Story = {
   args: {
     status: 'idle',
     idle: <p style={{ color: '#666', fontFamily: 'sans-serif' }}>Ask me anything…</p>,
+    streaming: <TypingIndicator visible />,
+    complete: <p style={{ fontFamily: 'sans-serif' }}>Done!</p>,
+  },
+}
+
+export const Submitted: Story = {
+  args: {
+    status: 'submitted',
+    idle: <p style={{ color: '#666', fontFamily: 'sans-serif' }}>Ask me anything…</p>,
+    submitted: (
+      <p style={{ color: '#6b7280', fontFamily: 'sans-serif', fontStyle: 'italic' }}>
+        Request sent — waiting for first token…
+      </p>
+    ),
     streaming: <TypingIndicator visible />,
     complete: <p style={{ fontFamily: 'sans-serif' }}>Done!</p>,
   },
@@ -68,7 +82,7 @@ export const ErrorState: Story = {
   },
 }
 
-const STATUSES: StreamStatus[] = ['idle', 'streaming', 'complete', 'error']
+const STATUSES: StreamStatus[] = ['idle', 'submitted', 'streaming', 'complete', 'error']
 
 function LifecycleDemo() {
   const [status, setStatus] = useState<StreamStatus>('idle')
@@ -123,6 +137,7 @@ function LifecycleDemo() {
         <StreamGuard
           status={status}
           idle={<span style={{ color: '#9ca3af' }}>Start a conversation…</span>}
+          submitted={<span style={{ color: '#6b7280', fontStyle: 'italic' }}>Request sent…</span>}
           streaming={<TypingIndicator visible />}
           complete={<StreamingText content={text} isStreaming={false} as="span" />}
           error={err => <span style={{ color: '#ef4444' }}>Error: {err?.message}</span>}

@@ -26,6 +26,12 @@ test.describe('StreamGuard', () => {
     await expect(page.locator('#storybook-root')).toContainText('Connection timed out')
   })
 
+  test('submitted story shows submitted slot', async ({ page }) => {
+    await gotoStory(page, 'primitives-streamguard--submitted')
+    await expect(page.locator('#storybook-root')).toContainText('waiting for first token')
+    await expect(page.getByRole('status')).toHaveCount(0)
+  })
+
   test('lifecycle simulation: clicking status buttons switches slots', async ({ page }) => {
     await gotoStory(page, 'primitives-streamguard--lifecycle-simulation')
 
@@ -33,6 +39,10 @@ test.describe('StreamGuard', () => {
 
     // Default state is idle
     await expect(root).toContainText('Start a conversation')
+
+    // Click submitted
+    await page.getByRole('button', { name: 'submitted' }).click()
+    await expect(root).toContainText('Request sent')
 
     // Click streaming
     await page.getByRole('button', { name: 'streaming' }).click()

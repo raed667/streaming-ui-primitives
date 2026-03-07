@@ -10,7 +10,7 @@ export { fromUseChatStatus } from './types'
 
 // Hooks
 export { useTokenStream } from './hooks/useTokenStream'
-export type { UseTokenStreamResult } from './hooks/useTokenStream'
+export type { UseTokenStreamResult, UseTokenStreamOptions } from './hooks/useTokenStream'
 
 export { useDebouncedStreaming, useAISDKStatus } from './hooks/useStreamingStatus'
 

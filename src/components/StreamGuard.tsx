@@ -9,6 +9,12 @@ export interface StreamGuardProps {
   status: StreamStatus
   /** Rendered when status is 'idle' */
   idle?: ReactNode
+  /**
+   * Rendered when status is 'submitted' — request sent, waiting for first token.
+   * Falls back to the `streaming` slot if not provided.
+   * Maps to Vercel AI SDK's 'submitted' status via `fromUseChatStatus`.
+   */
+  submitted?: ReactNode
   /** Rendered when status is 'streaming' */
   streaming?: ReactNode
   /** Rendered when status is 'complete' */
@@ -56,6 +62,7 @@ export interface StreamGuardProps {
 export function StreamGuard({
   status,
   idle,
+  submitted,
   streaming,
   complete,
   error,
@@ -64,6 +71,10 @@ export function StreamGuard({
   switch (status) {
     case 'idle':
       return idle != null ? <>{idle}</> : null
+    case 'submitted':
+      // Fall back to streaming slot if submitted slot not provided
+      if (submitted != null) return <>{submitted}</>
+      return streaming != null ? <>{streaming}</> : null
     case 'streaming':
       return streaming != null ? <>{streaming}</> : null
     case 'complete':

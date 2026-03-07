@@ -5,4 +5,8 @@ export { fromOpenAIChatStream, fromOpenAICompletionStream } from './fromOpenAISt
 
 export { fromAnthropicStream } from './fromAnthropicStream'
 
+export { fromLangChainStream } from './fromLangChainStream'
+
+export { fromLlamaIndexStream } from './fromLlamaIndexStream'
+
 export { partsToText, hasActiveToolCall } from './partsToText'

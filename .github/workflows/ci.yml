@@ -26,6 +26,8 @@ jobs:
 
       - run: pnpm typecheck
 
+      - run: pnpm typecheck:examples
+
       - run: pnpm test
 
   e2e:

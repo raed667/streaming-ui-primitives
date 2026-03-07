@@ -156,6 +156,11 @@ function UseChatSimulation() {
               Press &ldquo;Send message&rdquo; to start the simulation…
             </span>
           }
+          submitted={
+            <span style={{ color: '#6b7280', fontStyle: 'italic' }}>
+              Request sent — waiting for first token…
+            </span>
+          }
           streaming={
             <div>
               {text === '' ? (

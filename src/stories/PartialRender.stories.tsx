@@ -175,3 +175,59 @@ export const StreamingMarkdown: Story = {
     },
   },
 }
+
+// ── onRenderError callback demo ───────────────────────────────────────────────
+
+function OnRenderErrorDemo() {
+  const [errorLog, setErrorLog] = useState<string[]>([])
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', width: 480 }}>
+      <PartialRender
+        content="content that will always fail to render"
+        isComplete={false}
+        renderer={() => { throw new Error('Simulated parse error') }}
+        errorFallback={(_err, raw) => (
+          <span style={{ color: '#6b7280', fontStyle: 'italic' }}>{raw}</span>
+        )}
+        onRenderError={(err, content) => {
+          setErrorLog(prev => [
+            ...prev.slice(-4),
+            `[${new Date().toLocaleTimeString()}] ${err.message} (content: "${content.slice(0, 20)}…")`,
+          ])
+        }}
+      />
+
+      <div
+        style={{
+          marginTop: 16,
+          background: '#1e1e2e',
+          borderRadius: 8,
+          padding: '10px 14px',
+          fontFamily: 'ui-monospace, monospace',
+          fontSize: 12,
+          color: '#cdd6f4',
+        }}
+      >
+        <div style={{ color: '#585b70', marginBottom: 6 }}>// onRenderError log</div>
+        {errorLog.length === 0
+          ? <span style={{ color: '#585b70' }}>No errors yet (renders once on mount)</span>
+          : errorLog.map((entry, i) => <div key={i}>{entry}</div>)
+        }
+      </div>
+    </div>
+  )
+}
+
+export const OnRenderErrorCallback: Story = {
+  render: () => <OnRenderErrorDemo />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`onRenderError` fires whenever the error boundary catches a renderer throw. ' +
+          'Use it to log errors to your observability stack without disrupting the UI.',
+      },
+    },
+  },
+}

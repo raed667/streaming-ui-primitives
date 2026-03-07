@@ -2,11 +2,12 @@
  * Streaming lifecycle status.
  *
  * Maps cleanly to Vercel AI SDK useChat status:
- *   'submitted' | 'streaming' → 'streaming'
- *   'ready'                   → 'complete'
- *   'error'                   → 'error'
+ *   'submitted' → 'submitted'  (request sent, waiting for first token)
+ *   'streaming' → 'streaming'
+ *   'ready'     → 'complete'
+ *   'error'     → 'error'
  */
-export type StreamStatus = 'idle' | 'streaming' | 'complete' | 'error'
+export type StreamStatus = 'idle' | 'submitted' | 'streaming' | 'complete' | 'error'
 
 /**
  * Anything that yields string tokens.
@@ -64,7 +65,7 @@ export type UseChatStatus = 'submitted' | 'streaming' | 'ready' | 'error'
 
 export function fromUseChatStatus(status: UseChatStatus): StreamStatus {
   const map: Record<UseChatStatus, StreamStatus> = {
-    submitted: 'streaming',
+    submitted: 'submitted',
     streaming: 'streaming',
     ready: 'complete',
     error: 'error',

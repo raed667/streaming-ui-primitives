@@ -5,7 +5,7 @@ Unstyled React primitives for generative/streaming UI patterns — compatible wi
 [![npm](https://img.shields.io/npm/v/@raed667/streaming-ui-primitives)](https://www.npmjs.com/package/@raed667/streaming-ui-primitives)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@raed667/streaming-ui-primitives?label=bundle)](https://bundlephobia.com/package/@raed667/streaming-ui-primitives)
 [![license](https://img.shields.io/npm/l/@raed667/streaming-ui-primitives)](./LICENSE)
-[![tests](https://img.shields.io/github/actions/workflow/status/raed-chammam/streaming-ui-primitives/ci.yml?label=tests)](https://github.com/raed-chammam/streaming-ui-primitives/actions)
+[![tests](https://img.shields.io/github/actions/workflow/status/raed667/streaming-ui-primitives/ci.yml?label=tests)](https://github.com/raed667/streaming-ui-primitives/actions)
 
 ---
 
@@ -26,30 +26,24 @@ yarn add @raed667/streaming-ui-primitives
 ## Quick Start
 
 ```tsx
-import {
-  useTokenStream,
-  StreamingText,
-  StreamGuard,
-} from "@raed667/streaming-ui-primitives";
-import { fromFetchSSE } from "@raed667/streaming-ui-primitives/adapters";
+import { useTokenStream, StreamingText, StreamGuard } from '@raed667/streaming-ui-primitives'
+import { fromFetchSSE } from '@raed667/streaming-ui-primitives/adapters'
 
 function ChatMessage() {
-  const [stream, setStream] = React.useState<AsyncIterable<string> | null>(
-    null,
-  );
-  const { text, status, error } = useTokenStream(stream);
+  const [stream, setStream] = React.useState<AsyncIterable<string> | null>(null)
+  const { text, status, error } = useTokenStream(stream)
 
   async function ask(prompt: string) {
-    const res = await fetch("/api/chat", {
-      method: "POST",
+    const res = await fetch('/api/chat', {
+      method: 'POST',
       body: JSON.stringify({ prompt }),
-    });
-    setStream(fromFetchSSE(res));
+    })
+    setStream(fromFetchSSE(res))
   }
 
   return (
     <div>
-      <button onClick={() => ask("Hello!")}>Send</button>
+      <button onClick={() => ask('Hello!')}>Send</button>
 
       <StreamGuard
         status={status}
@@ -59,7 +53,7 @@ function ChatMessage() {
         error={(err) => <p>Error: {err?.message}</p>}
       />
     </div>
-  );
+  )
 }
 ```
 
@@ -72,11 +66,10 @@ function ChatMessage() {
 Consumes any token source and accumulates the text, tracking the full streaming lifecycle.
 
 ```tsx
-import { useTokenStream } from "@raed667/streaming-ui-primitives";
+import { useTokenStream } from '@raed667/streaming-ui-primitives'
 
 // source can be AsyncIterable<string>, ReadableStream<Uint8Array>, or null/undefined
-const { text, isStreaming, status, error, abort, reset } =
-  useTokenStream(source);
+const { text, isStreaming, status, error, abort, reset } = useTokenStream(source)
 ```
 
 Pass `null` or `undefined` to keep the hook idle. When `source` changes, the previous stream is automatically aborted.
@@ -88,12 +81,13 @@ Pass `null` or `undefined` to keep the hook idle. When `source` changes, the pre
 Bridges Vercel AI SDK's `UIMessage.parts` array to simple derived values. No runtime dependency on the `ai` package.
 
 ```tsx
-import { useMessageStream } from "@raed667/streaming-ui-primitives";
+import { useMessageStream } from '@raed667/streaming-ui-primitives'
 
-const { messages, status } = useChat({ api: "/api/chat" });
-const lastMsg = messages[messages.length - 1];
-const { text, reasoning, hasActiveToolCall, hasReasoning, sourceUrls } =
-  useMessageStream(lastMsg?.parts ?? []);
+const { messages, status } = useChat({ api: '/api/chat' })
+const lastMsg = messages[messages.length - 1]
+const { text, reasoning, hasActiveToolCall, hasReasoning, sourceUrls } = useMessageStream(
+  lastMsg?.parts ?? [],
+)
 ```
 
 ---
@@ -103,10 +97,10 @@ const { text, reasoning, hasActiveToolCall, hasReasoning, sourceUrls } =
 Debounces `isStreaming` to prevent flicker when a stream pauses briefly between tokens.
 
 ```tsx
-import { useDebouncedStreaming } from "@raed667/streaming-ui-primitives";
+import { useDebouncedStreaming } from '@raed667/streaming-ui-primitives'
 
-const { isStreaming } = useTokenStream(source);
-const stableStreaming = useDebouncedStreaming(isStreaming, 150); // default: 150ms
+const { isStreaming } = useTokenStream(source)
+const stableStreaming = useDebouncedStreaming(isStreaming, 150) // default: 150ms
 ```
 
 ---
@@ -116,10 +110,10 @@ const stableStreaming = useDebouncedStreaming(isStreaming, 150); // default: 150
 Maps a Vercel AI SDK `useChat` status string directly to `StreamStatus`.
 
 ```tsx
-import { useAISDKStatus } from "@raed667/streaming-ui-primitives";
+import { useAISDKStatus } from '@raed667/streaming-ui-primitives'
 
-const { status } = useChat({ api: "/api/chat" });
-const streamStatus = useAISDKStatus(status); // 'idle' | 'streaming' | 'complete' | 'error'
+const { status } = useChat({ api: '/api/chat' })
+const streamStatus = useAISDKStatus(status) // 'idle' | 'streaming' | 'complete' | 'error'
 ```
 
 ---
@@ -170,18 +164,15 @@ import { TypingIndicator } from '@raed667/streaming-ui-primitives'
 Gracefully renders partial/incomplete content during streaming. Uses an error boundary to catch parse errors mid-stream and fall back to plain text. Renderer-agnostic — pass any render function.
 
 ```tsx
-import { PartialRender } from "@raed667/streaming-ui-primitives";
-import { marked } from "marked";
-
-<PartialRender
+import { PartialRender } from '@raed667/streaming-ui-primitives'
+import { marked } from 'marked'
+;<PartialRender
   content={text}
-  isComplete={status === "complete"}
-  renderer={(content, isComplete) => (
-    <div dangerouslySetInnerHTML={{ __html: marked(content) }} />
-  )}
+  isComplete={status === 'complete'}
+  renderer={(content, isComplete) => <div dangerouslySetInnerHTML={{ __html: marked(content) }} />}
   fallback={<span>Thinking...</span>}
   errorFallback={(err, content) => <pre>{content}</pre>}
-/>;
+/>
 ```
 
 ---
@@ -191,16 +182,15 @@ import { marked } from "marked";
 Status-driven render slots — a type-safe switch/case over stream lifecycle states.
 
 ```tsx
-import { StreamGuard } from "@raed667/streaming-ui-primitives";
-
-<StreamGuard
+import { StreamGuard } from '@raed667/streaming-ui-primitives'
+;<StreamGuard
   status={status}
   idle={<p>Ask me anything...</p>}
   streaming={<TypingIndicator visible />}
   complete={<StreamingText content={text} />}
   error={(err) => <p>Something went wrong: {err?.message}</p>}
   errorValue={error}
-/>;
+/>
 ```
 
 ---
@@ -216,7 +206,7 @@ import {
   fromAnthropicStream,
   partsToText,
   hasActiveToolCall,
-} from "@raed667/streaming-ui-primitives/adapters";
+} from '@raed667/streaming-ui-primitives/adapters'
 ```
 
 ---
@@ -227,35 +217,35 @@ Converts a raw `fetch` `Response` body (plain text or Server-Sent Events) into a
 
 ```tsx
 // Plain text stream (auto-detected from Content-Type)
-const res = await fetch("/api/stream");
-const stream = fromFetchSSE(res);
+const res = await fetch('/api/stream')
+const stream = fromFetchSSE(res)
 
 // SSE stream with `data:` prefix (Vercel AI SDK text stream, OpenAI-compatible endpoints)
-const res = await fetch("/api/chat", {
-  method: "POST",
+const res = await fetch('/api/chat', {
+  method: 'POST',
   body: JSON.stringify(payload),
-});
-const stream = fromFetchSSE(res, { mode: "sse-text" });
+})
+const stream = fromFetchSSE(res, { mode: 'sse-text' })
 
 // SSE stream with JSON payloads — custom dot-path extraction
 const stream = fromFetchSSE(res, {
-  mode: "sse-json",
-  jsonPath: "choices.0.delta.content",
-});
+  mode: 'sse-json',
+  jsonPath: 'choices.0.delta.content',
+})
 
 // Vercel AI SDK data stream protocol (bare `0:"token"` lines, no `data:` prefix)
-const stream = fromFetchSSE(res, { mode: "vercel-ai" });
+const stream = fromFetchSSE(res, { mode: 'vercel-ai' })
 
 // Use with useTokenStream inside a component
-const [stream, setStream] = useState(null);
-const { text } = useTokenStream(stream);
+const [stream, setStream] = useState(null)
+const { text } = useTokenStream(stream)
 
 async function send(prompt) {
-  const res = await fetch("/api/chat", {
-    method: "POST",
+  const res = await fetch('/api/chat', {
+    method: 'POST',
     body: JSON.stringify({ prompt }),
-  });
-  setStream(fromFetchSSE(res));
+  })
+  setStream(fromFetchSSE(res))
 }
 ```
 
@@ -266,21 +256,21 @@ async function send(prompt) {
 Converts an Anthropic SDK `client.messages.stream(...)` result to `AsyncIterable<string>`. Zero runtime dependency — accepts the shape structurally.
 
 ```tsx
-import Anthropic from "@anthropic-ai/sdk";
-import { fromAnthropicStream } from "@raed667/streaming-ui-primitives/adapters";
+import Anthropic from '@anthropic-ai/sdk'
+import { fromAnthropicStream } from '@raed667/streaming-ui-primitives/adapters'
 
-const client = new Anthropic();
+const client = new Anthropic()
 const stream = client.messages.stream({
-  model: "claude-opus-4-5",
+  model: 'claude-opus-4-5',
   max_tokens: 1024,
-  messages: [{ role: "user", content: prompt }],
-});
+  messages: [{ role: 'user', content: prompt }],
+})
 
 // Option A — adapter (handles raw Stream<RawMessageStreamEvent>)
-const { text } = useTokenStream(fromAnthropicStream(stream));
+const { text } = useTokenStream(fromAnthropicStream(stream))
 
 // Option B — direct (stream.textStream is already AsyncIterable<string>)
-const { text } = useTokenStream(stream.textStream);
+const { text } = useTokenStream(stream.textStream)
 ```
 
 ---
@@ -290,19 +280,19 @@ const { text } = useTokenStream(stream.textStream);
 Converts an OpenAI SDK `chat.completions.stream(...)` result to `AsyncIterable<string>`. Zero runtime dependency on the OpenAI SDK — accepts the shape structurally.
 
 ```tsx
-import OpenAI from "openai";
-import { fromOpenAIChatStream } from "@raed667/streaming-ui-primitives/adapters";
+import OpenAI from 'openai'
+import { fromOpenAIChatStream } from '@raed667/streaming-ui-primitives/adapters'
 
-const openai = new OpenAI();
+const openai = new OpenAI()
 const stream = openai.chat.completions.stream({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: prompt }],
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: prompt }],
   stream: true,
-});
-const tokenStream = fromOpenAIChatStream(stream);
+})
+const tokenStream = fromOpenAIChatStream(stream)
 
 // In a component:
-const { text, isStreaming } = useTokenStream(tokenStream);
+const { text, isStreaming } = useTokenStream(tokenStream)
 ```
 
 ---
@@ -313,11 +303,11 @@ Same as above but for legacy text completions (`openai.completions.create(..., {
 
 ```tsx
 const stream = openai.completions.create({
-  model: "gpt-3.5-turbo-instruct",
+  model: 'gpt-3.5-turbo-instruct',
   prompt,
   stream: true,
-});
-const tokenStream = fromOpenAICompletionStream(stream);
+})
+const tokenStream = fromOpenAICompletionStream(stream)
 ```
 
 ---
@@ -327,16 +317,16 @@ const tokenStream = fromOpenAICompletionStream(stream);
 Extracts plain text from a Vercel AI SDK `UIMessage.parts` array. Concatenates all `type: 'text'` parts in order.
 
 ```tsx
-import { partsToText } from "@raed667/streaming-ui-primitives/adapters";
+import { partsToText } from '@raed667/streaming-ui-primitives/adapters'
 
-const { messages } = useChat({ api: "/api/chat" });
-const lastMessage = messages[messages.length - 1];
-const text = partsToText(lastMessage.parts);
+const { messages } = useChat({ api: '/api/chat' })
+const lastMessage = messages[messages.length - 1]
+const text = partsToText(lastMessage.parts)
 
 // Include reasoning parts too
 const textWithReasoning = partsToText(lastMessage.parts, {
   includeReasoning: true,
-});
+})
 ```
 
 ---
@@ -359,10 +349,10 @@ const isToolRunning = hasActiveToolCall(message.parts)
 Utility function (also exported from the main entry) that maps a Vercel AI SDK `useChat` status to `StreamStatus`.
 
 ```tsx
-import { fromUseChatStatus } from "@raed667/streaming-ui-primitives";
+import { fromUseChatStatus } from '@raed667/streaming-ui-primitives'
 
-const { status } = useChat({ api: "/api/chat" });
-const streamStatus = fromUseChatStatus(status);
+const { status } = useChat({ api: '/api/chat' })
+const streamStatus = fromUseChatStatus(status)
 // 'submitted' | 'streaming' → 'streaming'
 // 'ready'                   → 'complete'
 // 'error'                   → 'error'

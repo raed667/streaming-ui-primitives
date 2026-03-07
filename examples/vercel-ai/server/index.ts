@@ -30,14 +30,22 @@ const app = express()
 app.use(express.json())
 
 const TOKENS = [
-  'The ', 'quick ', 'brown ', 'fox ', 'jumps ', 'over ', 'the ', 'lazy ', 'dog. ',
+  'The ',
+  'quick ',
+  'brown ',
+  'fox ',
+  'jumps ',
+  'over ',
+  'the ',
+  'lazy ',
+  'dog. ',
   'Here is a longer sentence demonstrating how streaming-ui-primitives accumulates ',
   'tokens one by one, giving users a real-time sense of the response forming. ',
   'You can abort mid-stream, reset to clear, or let it complete naturally.',
 ]
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 app.post('/api/chat', async (_req, res) => {
@@ -49,7 +57,10 @@ app.post('/api/chat', async (_req, res) => {
   await delay(200)
 
   // Stream a reasoning part first (demonstrates useMessageStream reasoning field)
-  const reasoningTokens = ['Thinking about this...', ' The question is about streaming UI patterns.']
+  const reasoningTokens = [
+    'Thinking about this...',
+    ' The question is about streaming UI patterns.',
+  ]
   for (const token of reasoningTokens) {
     res.write(JSON.stringify({ type: 'reasoning', reasoning: token }) + '\n')
     await delay(60)
@@ -62,11 +73,13 @@ app.post('/api/chat', async (_req, res) => {
   }
 
   // Optionally send source URLs
-  res.write(JSON.stringify({
-    type: 'source-url',
-    url: 'https://github.com/raed-chammam/streaming-ui-primitives',
-    title: 'streaming-ui-primitives on GitHub',
-  }) + '\n')
+  res.write(
+    JSON.stringify({
+      type: 'source-url',
+      url: 'https://github.com/raed667/streaming-ui-primitives',
+      title: 'streaming-ui-primitives on GitHub',
+    }) + '\n',
+  )
 
   res.end()
 })

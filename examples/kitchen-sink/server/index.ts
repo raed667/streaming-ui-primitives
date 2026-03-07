@@ -14,10 +14,26 @@ const app = express()
 app.use(express.json())
 
 const TOKENS = [
-  'This ', 'is ', 'a ', 'streaming ', 'response ', 'from ',
-  'the ', 'mock ', 'server. ', 'Each ', 'token ', 'arrives ',
-  'at ', '80ms ', 'intervals, ', 'simulating ', 'a ', 'real ',
-  'LLM ', 'stream.',
+  'This ',
+  'is ',
+  'a ',
+  'streaming ',
+  'response ',
+  'from ',
+  'the ',
+  'mock ',
+  'server. ',
+  'Each ',
+  'token ',
+  'arrives ',
+  'at ',
+  '80ms ',
+  'intervals, ',
+  'simulating ',
+  'a ',
+  'real ',
+  'LLM ',
+  'stream.',
 ]
 
 const MARKDOWN_TOKENS = [
@@ -38,7 +54,7 @@ const MARKDOWN_TOKENS = [
 ]
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 // Generic SSE text stream
@@ -99,23 +115,27 @@ app.post('/api/reasoning', async (_req, res) => {
   }
 
   // Brief tool call simulation
-  res.write(JSON.stringify({
-    type: 'tool-invocation',
-    toolCallId: 'call_1',
-    toolName: 'web_search',
-    state: 'call',
-    args: { query: 'streaming UI primitives' },
-  }) + '\n')
+  res.write(
+    JSON.stringify({
+      type: 'tool-invocation',
+      toolCallId: 'call_1',
+      toolName: 'web_search',
+      state: 'call',
+      args: { query: 'streaming UI primitives' },
+    }) + '\n',
+  )
   await delay(400)
 
-  res.write(JSON.stringify({
-    type: 'tool-invocation',
-    toolCallId: 'call_1',
-    toolName: 'web_search',
-    state: 'result',
-    args: { query: 'streaming UI primitives' },
-    result: { snippets: ['Found relevant results.'] },
-  }) + '\n')
+  res.write(
+    JSON.stringify({
+      type: 'tool-invocation',
+      toolCallId: 'call_1',
+      toolName: 'web_search',
+      state: 'result',
+      args: { query: 'streaming UI primitives' },
+      result: { snippets: ['Found relevant results.'] },
+    }) + '\n',
+  )
   await delay(100)
 
   // Text response
@@ -133,16 +153,20 @@ app.post('/api/reasoning', async (_req, res) => {
   }
 
   // Source URLs
-  res.write(JSON.stringify({
-    type: 'source-url',
-    url: 'https://github.com/raed-chammam/streaming-ui-primitives',
-    title: 'streaming-ui-primitives on GitHub',
-  }) + '\n')
-  res.write(JSON.stringify({
-    type: 'source-url',
-    url: 'https://www.npmjs.com/package/streaming-ui-primitives',
-    title: 'npm: streaming-ui-primitives',
-  }) + '\n')
+  res.write(
+    JSON.stringify({
+      type: 'source-url',
+      url: 'https://github.com/raed667/streaming-ui-primitives',
+      title: 'streaming-ui-primitives on GitHub',
+    }) + '\n',
+  )
+  res.write(
+    JSON.stringify({
+      type: 'source-url',
+      url: 'https://www.npmjs.com/package/streaming-ui-primitives',
+      title: 'npm: streaming-ui-primitives',
+    }) + '\n',
+  )
 
   res.end()
 })

@@ -22,11 +22,11 @@
   "author": "Raed Chammam",
   "repository": {
     "type": "git",
-    "url": "https://github.com/raed-chammam/streaming-ui-primitives"
+    "url": "https://github.com/raed667/streaming-ui-primitives"
   },
-  "homepage": "https://github.com/raed-chammam/streaming-ui-primitives#readme",
+  "homepage": "https://github.com/raed667/streaming-ui-primitives#readme",
   "bugs": {
-    "url": "https://github.com/raed-chammam/streaming-ui-primitives/issues"
+    "url": "https://github.com/raed667/streaming-ui-primitives/issues"
   },
   "keywords": [
     "react",

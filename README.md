@@ -59,6 +59,22 @@ function ChatMessage() {
 
 ---
 
+## Preview
+
+**Streaming markdown** — `PartialRender` with a markdown renderer, token by token:
+
+![Streaming markdown demo](./assets/streaming-markdown.gif)
+
+**Typing indicator** — three built-in variants, unstyled (inherits `color`):
+
+![TypingIndicator dots, pulse, bar variants](./assets/typing-indicator.gif)
+
+**Streaming text with cursor** — `StreamingText` with blinking cursor while active:
+
+![StreamingText with blinking cursor](./assets/streaming-text-cursor.gif)
+
+---
+
 ## Primitives
 
 ### `useTokenStream(source)`
@@ -372,143 +388,6 @@ const streamStatus = fromUseChatStatus(status)
 | **LangChain.js**      | Pass `chain.stream()` directly to `useTokenStream()`                                                         | Any `AsyncIterable<string>` works without an adapter                                                                                  |
 | **LlamaIndex.TS**     | Pass `engine.chat({ stream: true })` result directly to `useTokenStream()`                                   | Any `AsyncIterable<string>` works without an adapter                                                                                  |
 | **Raw fetch SSE**     | `fromFetchSSE(response)`                                                                                     | Auto-detects plain text vs SSE from `Content-Type`; use `mode` option to force                                                        |
-
----
-
-## API Reference
-
-### Types
-
-| Export                | Description                                                                     |
-| --------------------- | ------------------------------------------------------------------------------- |
-| `StreamStatus`        | `'idle' \| 'streaming' \| 'complete' \| 'error'`                                |
-| `TokenSource`         | `AsyncIterable<string> \| ReadableStream<Uint8Array> \| ReadableStream<string>` |
-| `UIMessagePartCompat` | Structural subset of Vercel AI SDK `UIMessagePart`                              |
-| `UIMessageCompat`     | Structural subset of Vercel AI SDK `UIMessage`                                  |
-| `UseChatStatus`       | `'submitted' \| 'streaming' \| 'ready' \| 'error'`                              |
-
----
-
-### `useTokenStream(source)`
-
-| Parameter | Type                               | Description                                                        |
-| --------- | ---------------------------------- | ------------------------------------------------------------------ |
-| `source`  | `TokenSource \| null \| undefined` | The token source to consume. Pass `null`/`undefined` to stay idle. |
-
-| Return value  | Type            | Description                                                     |
-| ------------- | --------------- | --------------------------------------------------------------- |
-| `text`        | `string`        | Full accumulated text so far                                    |
-| `isStreaming` | `boolean`       | Whether a stream is actively producing tokens                   |
-| `status`      | `StreamStatus`  | Full lifecycle status                                           |
-| `error`       | `Error \| null` | Error object if status is `'error'`                             |
-| `abort`       | `() => void`    | Cancel the stream, preserve accumulated text, status → `'idle'` |
-| `reset`       | `() => void`    | Cancel the stream and clear all state back to idle              |
-
----
-
-### `useMessageStream(parts)`
-
-| Parameter | Type                    | Description                    |
-| --------- | ----------------------- | ------------------------------ |
-| `parts`   | `UIMessagePartCompat[]` | Parts array from a `UIMessage` |
-
-| Return value        | Type                                     | Description                                          |
-| ------------------- | ---------------------------------------- | ---------------------------------------------------- |
-| `text`              | `string`                                 | Concatenated text from all `type: 'text'` parts      |
-| `reasoning`         | `string`                                 | Concatenated text from all `type: 'reasoning'` parts |
-| `hasActiveToolCall` | `boolean`                                | Whether any tool invocation is pending               |
-| `hasReasoning`      | `boolean`                                | Whether any reasoning part is present                |
-| `sourceUrls`        | `Array<{ url: string; title?: string }>` | All source URLs from `type: 'source-url'` parts      |
-
----
-
-### `useDebouncedStreaming(isStreaming, debounceMs?)`
-
-| Parameter     | Type      | Default | Description                              |
-| ------------- | --------- | ------- | ---------------------------------------- |
-| `isStreaming` | `boolean` | —       | Raw streaming boolean                    |
-| `debounceMs`  | `number`  | `150`   | Delay before declaring streaming stopped |
-
-Returns `boolean` — the stabilised streaming state.
-
----
-
-### `useAISDKStatus(chatStatus)`
-
-| Parameter    | Type            | Description                                |
-| ------------ | --------------- | ------------------------------------------ |
-| `chatStatus` | `UseChatStatus` | Status string from Vercel AI SDK `useChat` |
-
-Returns `StreamStatus`.
-
----
-
-### `<StreamingText>` props
-
-| Prop          | Type                   | Default  | Description                                                 |
-| ------------- | ---------------------- | -------- | ----------------------------------------------------------- |
-| `content`     | `string`               | —        | Accumulated text to display                                 |
-| `cursor`      | `boolean \| ReactNode` | `false`  | Show a blinking cursor; `true` uses the built-in bar cursor |
-| `isStreaming` | `boolean`              | `true`   | Controls cursor visibility                                  |
-| `as`          | `ElementType`          | `'span'` | HTML element to render as                                   |
-| `className`   | `string`               | —        | CSS class                                                   |
-| `style`       | `CSSProperties`        | —        | Inline styles                                               |
-
----
-
-### `<TypingIndicator>` props
-
-| Prop         | Type                         | Default          | Description                    |
-| ------------ | ---------------------------- | ---------------- | ------------------------------ |
-| `visible`    | `boolean`                    | —                | Whether the indicator is shown |
-| `variant`    | `'dots' \| 'pulse' \| 'bar'` | `'dots'`         | Visual style                   |
-| `aria-label` | `string`                     | `'AI is typing'` | Accessible label               |
-| `className`  | `string`                     | —                | CSS class                      |
-| `style`      | `CSSProperties`              | —                | Inline styles                  |
-
----
-
-### `<PartialRender>` props
-
-| Prop            | Type                                                          | Default    | Description                                 |
-| --------------- | ------------------------------------------------------------- | ---------- | ------------------------------------------- |
-| `content`       | `string`                                                      | —          | Potentially partial content string          |
-| `renderer`      | `(content: string, isComplete: boolean) => ReactNode`         | —          | Render function called with current content |
-| `isComplete`    | `boolean`                                                     | `true`     | Whether the stream has finished             |
-| `fallback`      | `ReactNode`                                                   | —          | Shown when `content` is empty               |
-| `errorFallback` | `ReactNode \| ((error: Error, content: string) => ReactNode)` | Plain text | Shown when renderer throws                  |
-| `className`     | `string`                                                      | —          | CSS class                                   |
-| `style`         | `CSSProperties`                                               | —          | Inline styles                               |
-
----
-
-### `<StreamGuard>` props
-
-| Prop         | Type                                                 | Description                               |
-| ------------ | ---------------------------------------------------- | ----------------------------------------- |
-| `status`     | `StreamStatus`                                       | Current stream status                     |
-| `idle`       | `ReactNode`                                          | Rendered when status is `'idle'`          |
-| `streaming`  | `ReactNode`                                          | Rendered when status is `'streaming'`     |
-| `complete`   | `ReactNode`                                          | Rendered when status is `'complete'`      |
-| `error`      | `ReactNode \| ((error: Error \| null) => ReactNode)` | Rendered when status is `'error'`         |
-| `errorValue` | `Error \| null`                                      | Forwarded to `error` when it's a function |
-
----
-
-### `fromFetchSSE(response, options?)` options
-
-| Option     | Type                                                          | Default                     | Description                                        |
-| ---------- | ------------------------------------------------------------- | --------------------------- | -------------------------------------------------- |
-| `mode`     | `'auto' \| 'text' \| 'sse-text' \| 'sse-json' \| 'vercel-ai'` | `'auto'`                    | Stream parsing mode. `auto` sniffs `Content-Type`. |
-| `jsonPath` | `string`                                                      | `'choices.0.delta.content'` | Dot-path to extract in `sse-json` mode             |
-
----
-
-### `partsToText(parts, options?)` options
-
-| Option             | Type      | Default | Description                              |
-| ------------------ | --------- | ------- | ---------------------------------------- |
-| `includeReasoning` | `boolean` | `false` | Whether to include `reasoning` part text |
 
 ---
 

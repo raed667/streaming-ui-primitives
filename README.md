@@ -3,7 +3,7 @@
 Unstyled React primitives for generative/streaming UI patterns — compatible with Vercel AI SDK, Anthropic, OpenAI, and more.
 
 [![npm](https://img.shields.io/npm/v/@raed667/streaming-ui-primitives)](https://www.npmjs.com/package/@raed667/streaming-ui-primitives)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@raed667/streaming-ui-primitives?label=bundle)](https://bundlephobia.com/package/@raed667/streaming-ui-primitives)
+[![install size](https://packagephobia.com/badge?p=@raed667/streaming-ui-primitives)](https://packagephobia.com/result?p=@raed667/streaming-ui-primitives)
 [![license](https://img.shields.io/npm/l/@raed667/streaming-ui-primitives)](./LICENSE)
 [![tests](https://img.shields.io/github/actions/workflow/status/raed667/streaming-ui-primitives/ci.yml?label=tests)](https://github.com/raed667/streaming-ui-primitives/actions)
 
@@ -199,7 +199,6 @@ Status-driven render slots — a type-safe switch/case over stream lifecycle sta
 
 ```tsx
 import { StreamGuard } from '@raed667/streaming-ui-primitives'
-
 ;<StreamGuard
   status={status}
   idle={<p>Ask me anything...</p>}

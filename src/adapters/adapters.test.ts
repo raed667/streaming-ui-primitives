@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { fromFetchSSE } from './fromFetchSSE'
 import { fromOpenAIChatStream, fromOpenAICompletionStream } from './fromOpenAIStream'
 import { fromAnthropicStream } from './fromAnthropicStream'
+import { fromAlgoliaAgentStream, fetchAlgoliaAgentStream } from './fromAlgoliaAgentStream'
 import { partsToText, hasActiveToolCall } from './partsToText'
 import type { UIMessagePartCompat } from '../types'
 
@@ -218,6 +219,147 @@ describe('partsToText', () => {
     expect(partsToText([])).toBe('')
   })
 })
+
+// ---------------------------------------------------------------------------
+// fromAlgoliaAgentStream
+// ---------------------------------------------------------------------------
+
+describe('fromAlgoliaAgentStream', () => {
+  it('yields delta from text-delta events', async () => {
+    const body = [
+      'data: {"type":"start","messageId":"msg1"}',
+      'data: {"type":"text-start","id":"msg1"}',
+      'data: {"type":"text-delta","id":"msg1","delta":"Hello"}',
+      'data: {"type":"text-delta","id":"msg1","delta":" world"}',
+      'data: {"type":"text-end","id":"msg1"}',
+      'data: {"type":"finish"}',
+      'data: [DONE]',
+      '',
+    ].join('\n')
+    const res = makeFetchResponse(body, 'text/event-stream')
+    const chunks = await collect(fromAlgoliaAgentStream(res))
+    expect(chunks).toEqual(['Hello', ' world'])
+  })
+
+  it('skips non-text-delta events (start, finish, data-suggestions)', async () => {
+    const body = [
+      'data: {"type":"start"}',
+      'data: {"type":"text-delta","delta":"Hi"}',
+      'data: {"type":"data-suggestions","data":{}}',
+      'data: {"type":"finish"}',
+      '',
+    ].join('\n')
+    const res = makeFetchResponse(body, 'text/event-stream')
+    const chunks = await collect(fromAlgoliaAgentStream(res))
+    expect(chunks).toEqual(['Hi'])
+  })
+
+  it('skips empty delta strings', async () => {
+    const body = [
+      'data: {"type":"text-delta","delta":""}',
+      'data: {"type":"text-delta","delta":"token"}',
+      '',
+    ].join('\n')
+    const res = makeFetchResponse(body, 'text/event-stream')
+    const chunks = await collect(fromAlgoliaAgentStream(res))
+    expect(chunks).toEqual(['token'])
+  })
+
+  it('throws on non-ok HTTP response', async () => {
+    const res = new Response('Unauthorized', { status: 401 })
+    await expect(collect(fromAlgoliaAgentStream(res))).rejects.toThrow('HTTP 401')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// fetchAlgoliaAgentStream
+// ---------------------------------------------------------------------------
+
+describe('fetchAlgoliaAgentStream', () => {
+  it('builds the correct URL with query params', async () => {
+    let capturedUrl = ''
+    const mockFetch = async (url: string | URL | Request): Promise<Response> => {
+      capturedUrl = String(url)
+      return makeFetchResponse('data: {"type":"text-delta","delta":"ok"}\n', 'text/event-stream')
+    }
+    await collect(
+      fetchAlgoliaAgentStream({
+        appId: 'myapp',
+        apiKey: 'mykey',
+        agentId: 'agent-uuid',
+        messages: [{ role: 'user', parts: [{ type: 'text', text: 'hi' }] }],
+        stream: true,
+        cache: false,
+        fetch: mockFetch as typeof globalThis.fetch,
+      }),
+    )
+    expect(capturedUrl).toBe(
+      'https://myapp.algolia.net/agent-studio/1/agents/agent-uuid/completions?compatibilityMode=ai-sdk-5&stream=true&cache=false',
+    )
+  })
+
+  it('sends correct authentication headers', async () => {
+    let capturedHeaders: Record<string, string> = {}
+    const mockFetch = async (
+      _url: string | URL | Request,
+      init?: RequestInit,
+    ): Promise<Response> => {
+      capturedHeaders = init?.headers as Record<string, string>
+      return makeFetchResponse('data: {"type":"text-delta","delta":"ok"}\n', 'text/event-stream')
+    }
+    await collect(
+      fetchAlgoliaAgentStream({
+        appId: 'myapp',
+        apiKey: 'mykey',
+        agentId: 'agent-uuid',
+        messages: [],
+        fetch: mockFetch as typeof globalThis.fetch,
+      }),
+    )
+    expect(capturedHeaders['X-Algolia-Application-Id']).toBe('MYAPP')
+    expect(capturedHeaders['X-Algolia-API-Key']).toBe('mykey')
+  })
+
+  it('yields tokens from the streaming response', async () => {
+    const body = [
+      'data: {"type":"text-delta","delta":"Hello"}',
+      'data: {"type":"text-delta","delta":" world"}',
+      '',
+    ].join('\n')
+    const mockFetch = async (): Promise<Response> =>
+      makeFetchResponse(body, 'text/event-stream')
+    const chunks = await collect(
+      fetchAlgoliaAgentStream({
+        appId: 'myapp',
+        apiKey: 'mykey',
+        agentId: 'agent-uuid',
+        messages: [{ role: 'user', parts: [{ type: 'text', text: 'hi' }] }],
+        fetch: mockFetch as typeof globalThis.fetch,
+      }),
+    )
+    expect(chunks).toEqual(['Hello', ' world'])
+  })
+
+  it('throws on HTTP error response', async () => {
+    const mockFetch = async (): Promise<Response> =>
+      new Response('Forbidden', { status: 403 })
+    await expect(
+      collect(
+        fetchAlgoliaAgentStream({
+          appId: 'myapp',
+          apiKey: 'mykey',
+          agentId: 'agent-uuid',
+          messages: [],
+          fetch: mockFetch as typeof globalThis.fetch,
+        }),
+      ),
+    ).rejects.toThrow('HTTP 403')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// hasActiveToolCall
+// ---------------------------------------------------------------------------
 
 describe('hasActiveToolCall', () => {
   it('returns true when tool-invocation is in call state', () => {
